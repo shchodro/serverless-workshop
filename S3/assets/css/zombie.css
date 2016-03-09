@@ -1,0 +1,122 @@
+
+body{
+    width:100%;
+    height:800px;
+    position:static;
+    background-repeat: no-repeat;
+      background: #272727;
+  background: -webkit-linear-gradient( #414141, #1c1b1b);
+  background:    -moz-linear-gradient( #414141, #1c1b1b);
+  background:         linear-gradient( #414141, #1c1b1b);
+    font-family: arial;
+    color:gray;
+    min-width:895px;
+}
+
+#square {
+    position:absolute;
+    z-index:-1;
+    width:100%;
+    background-color:black;
+    height:80px;
+}
+
+#zombie-logo {
+    float:left;
+    padding-top:4px;}
+
+#main-header {
+    text-align:left;
+    color:red;
+    font-size: 2.6em;
+    padding-top:12px;
+    display:inline;
+    width:60%;
+    float:left;}
+
+#logo {
+    padding-top:15px;
+    padding-right:10%;
+    float:right;
+}
+
+#wrapper {
+    padding-left: 3em;
+    padding-right:3em;}
+
+#chat-toggle{
+    border:none;
+    background-color:rgb(102,0,0);
+    color:white;
+    font-style:normal;
+    display:inline;
+}
+
+
+#chat-body {
+  overflow-y: scroll;
+  height:400px;
+    background-color:#2a2a2a;
+    border-style:solid;
+    border-width: 1px;
+    border-color:#414141;
+    font-style:normal;
+
+}
+
+#talkers-body {
+    background-color:#2a2a2a;
+    border-style:solid;
+    border-width: 1px;
+    border-color:#414141;
+    font-style:normal;
+}
+
+#name-input {
+    background-color:#2a2a2a;
+    border-style:solid;
+    border-width: 1px;
+    border-color:#414141;
+}
+
+p {display:inline;}
+
+#username {
+    float:none;
+    clear:both;
+    padding-top:3em;
+    Padding-left:1em;
+    padding-bottom:1.5em;
+}
+
+.form-group { padding: 1em;}
+
+.panel-footer {
+    background-color:transparent;}
+
+#chat-message-input {
+    background-color:#2a2a2a;
+    border-style:solid;
+    border-width: 1px;
+    border-color:#414141;
+}
+
+#chat-message-input::-webkit-input-placeholder {
+    font-style:italic;
+}
+
+::-webkit-scrollbar {
+background-color:#2a2a2a;
+}
+
+#name-input::-webkit-input-placeholder {
+    font-style:italic;
+}
+
+.mainLoginInput:-moz-placeholder {
+     font-style:italic;
+}
+
+input::-webkit-input-placeholder {
+background-color:#2a2a2a;
+}

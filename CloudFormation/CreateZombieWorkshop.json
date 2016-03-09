@@ -1,0 +1,509 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "AWS CloudFormation template to launch resources for a serverless group chat. This was designed for ReInvent 2015 (WRK305: Zombie Apocalypse Survival: Building Serverless Microservices) ",
+
+  "Mappings": {
+    "AllowedRegions": {
+      "us-west-2": {"Region": "https://s3-us-west-2"}
+    }
+  },
+
+  "Parameters": {
+    "NumberOfIAMUsers": {
+      "Description": "Number of IAM users to be created for this stack",
+      "Type": "Number",
+      "MinValue": "0",
+      "MaxValue": "10",
+      "Default": "0"
+    }
+  },
+
+  "Conditions": {
+    "CreateIamResources": {
+      "Fn::Not": [{
+        "Fn::Equals": [
+          {"Ref": "NumberOfIAMUsers"}, "0"
+        ]
+      }]
+    }
+  },
+
+  "Resources": {
+    "ZombieLabLambdaRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": {"Service": ["lambda.amazonaws.com", "apigateway.amazonaws.com"]},
+            "Action": ["sts:AssumeRole"]
+          }]
+        },
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "root",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [{
+              "Effect": "Allow",
+              "Action": ["logs:CreateLogGroup","logs:CreateLogStream","logs:PutLogEvents"],
+              "Resource": "arn:aws:logs:*:*:*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": ["cloudformation:*"],
+              "Resource": ["*"]
+            },
+            {
+              "Effect": "Allow",
+              "Action": ["lambda:*"],
+              "Resource": ["*"]
+            },
+            {
+              "Effect": "Allow",
+              "Action": ["execute-api:*"],
+              "Resource": ["*"]
+            },
+            {
+              "Effect": "Allow",
+              "Action": ["dynamodb:*"],
+              "Resource": ["*"]
+            },
+            {
+              "Effect": "Allow",
+              "Action": ["kinesis:*"],
+              "Resource": ["*"]
+            },
+            {
+              "Effect": "Allow",
+              "Action": ["s3:*"],
+              "Resource": ["*"]
+            },
+            {
+              "Effect": "Allow",
+              "Action": ["apigateway:*"],
+              "Resource": ["*"]
+            },
+            {
+              "Effect": "Allow",
+              "Action": ["iam:*"],
+              "Resource": ["*"]
+            }]
+          }
+        }]
+      }
+    },
+
+    "IamUserPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Condition": "CreateIamResources",
+      "Properties": {
+        "PolicyName": "ZombieLabUserPolicy",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": ["*"],
+              "Resource": ["*"]
+            },
+            {
+              "Effect": "Deny",
+              "Action": ["aws-portal:*"],
+              "Resource": ["*"]
+            }
+          ]
+        },
+        "Groups": [{ "Fn::GetAtt": ["CreateIAMUsers", "IamGroup"]}]
+      },
+      "DependsOn": ["ZombieLabLambdaRole","CreateIAMUsers"]
+    },
+
+    "S3BucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {"Ref" : "S3BucketForWebsiteContent"},
+        "PolicyDocument": {
+          "Statement":[{
+          "Action":["s3:GetObject"],
+          "Effect":"Allow",
+          "Resource": { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "S3BucketForWebsiteContent" } , "/*" ]]},
+          "Principal": "*"
+          }]
+        }
+      }
+    },
+
+    "MessagesDynamoDBTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "messages",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "channel",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "timestamp",
+            "AttributeType": "N"
+          }
+        ],
+        "KeySchema": [
+          {"AttributeName": "channel", "KeyType": "HASH"},
+          {"AttributeName": "timestamp", "KeyType": "RANGE"}
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 25,
+          "WriteCapacityUnits": 25
+        }
+      }
+    },
+
+    "TalkersDynamoDBTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "talkers",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "channel",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "talktime",
+            "AttributeType": "N"
+          }
+        ],
+        "KeySchema": [
+          {"AttributeName": "channel", "KeyType": "HASH"},
+          {"AttributeName": "talktime", "KeyType": "RANGE"}
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 50,
+          "WriteCapacityUnits": 50
+        }
+      }
+    },
+
+    "S3BucketForWebsiteContent": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "PublicRead",
+        "WebsiteConfiguration": {
+           "IndexDocument": "index.html",
+           "ErrorDocument": "error.html"
+        }
+      },
+      "DependsOn" : "ZombieLabLambdaRole"
+    },
+
+    "PutWebsiteFilesInS3": {
+      "Type": "Custom::PutWebsiteFilesInS3",
+      "Properties": {
+        "ServiceToken": { "Fn::GetAtt" : ["S3GetFilesFunction", "Arn"] },
+        "StackName": { "Ref": "AWS::StackName" },
+        "BucketName": "reinvent-wrk305-2015",
+        "WebsiteBucketCreatedEarlier": { "Ref" : "S3BucketForWebsiteContent" },
+        "S3Region": { "Ref" : "AWS::Region" }
+      },
+      "DependsOn": [
+        "ZombieLabLambdaRole",
+        "S3BucketForWebsiteContent"
+      ]
+    },
+
+    "S3GetFilesFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "S3GetFilesFunction.handler",
+        "Role": { "Fn::GetAtt": ["ZombieLabLambdaRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "reinvent-wrk305-2015",
+          "S3Key": "S3GetFilesFunction.zip"
+        },
+        "Runtime": "nodejs",
+        "Timeout": "60"
+      },
+      "DependsOn": [
+        "ZombieLabLambdaRole",
+        "S3BucketForWebsiteContent"
+      ]
+    },
+
+    "CreateAPIGateway": {
+      "Type": "Custom::CreateAPIGateway",
+      "Properties": {
+        "ServiceToken": { "Fn::GetAtt": ["APIGatewayFunction", "Arn"] },
+        "postmessagelambdaapiuri": { "Fn::Join": [ "", [ "arn:aws:apigateway:", { "Ref": "AWS::Region" }, ":lambda:path/2015-03-31/functions/", { "Fn::GetAtt": ["WriteMessagesToDynamoDB", "Arn"] }, "/invocations" ] ] },
+        "getmessagelambdaapiuri": { "Fn::Join": [ "", [ "arn:aws:apigateway:", { "Ref": "AWS::Region" }, ":lambda:path/2015-03-31/functions/", { "Fn::GetAtt": ["GetMessagesFromDynamoDB", "Arn"] }, "/invocations" ] ] },
+        "region": { "Ref": "AWS::Region" },
+        "iamrole": { "Fn::GetAtt": ["ZombieLabLambdaRole", "Arn"] },
+        "s3bucket": { "Ref": "S3BucketForWebsiteContent" },
+        "s3key": "S3/assets/js/constants.js"
+      },
+      "DependsOn": [
+        "S3BucketForWebsiteContent",
+        "ZombieLabLambdaRole",
+        "PutWebsiteFilesInS3",
+        "WriteMessagesToDynamoDB",
+        "GetMessagesFromDynamoDB",
+        "MessagesDynamoDBTable"
+      ]
+    },
+
+    "APIGatewayFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "LambdaHandler.handleGatewayEvent",
+        "Role": { "Fn::GetAtt" : ["ZombieLabLambdaRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "reinvent-wrk305-2015",
+          "S3Key": "WK305_Gateway.zip"
+        },
+        "Runtime": "nodejs",
+        "Timeout": "300",
+        "MemorySize": "1536"
+      },
+      "DependsOn": [
+        "MessagesDynamoDBTable",
+        "ZombieLabLambdaRole"
+      ]
+    },
+
+    "WriteMessagesToDynamoDB": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "ZombiePostMessage.handler",
+        "Role": { "Fn::GetAtt" : ["ZombieLabLambdaRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "reinvent-wrk305-2015",
+          "S3Key": "ZombiePostMessage.zip"
+        },
+        "Runtime": "nodejs",
+        "Timeout": "60"
+      },
+      "DependsOn": "MessagesDynamoDBTable"
+    },
+
+    "GetMessagesFromDynamoDB": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "ZombieGetMessages.handler",
+        "Role": { "Fn::GetAtt" : ["ZombieLabLambdaRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "reinvent-wrk305-2015",
+          "S3Key": "ZombieGetMessages.zip"
+        },
+        "Runtime": "nodejs",
+        "Timeout": "60"
+      },
+      "DependsOn" : "MessagesDynamoDBTable"
+    },
+
+    "WriteTalkersToDynamoDB": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "index.handler",
+        "Role": { "Fn::GetAtt" : ["ZombieLabLambdaRole", "Arn"] },
+        "Code": {
+          "ZipFile": { "Fn::Join": ["\n", [
+            "console.log('Loading function');",
+            "",
+            "var AWS = require('aws-sdk');",
+            "",
+            "var docClient = new AWS.DynamoDB.DocumentClient({",
+            "  region: 'us-west-2'",
+            "});",
+            "",
+            "exports.handler = function(event, context) {",
+            "  console.log('Received event:', JSON.stringify(event, null, 2));",
+            "",
+            "  if (event.name == null) {",
+            "    context.fail(new Error('name cannot be null: ' + JSON.stringify(event, null, 2)));",
+            "  }",
+            "",
+            "  var params = {",
+            "    TableName: 'talkers',",
+            "    Item: {",
+            "      channel: 'default',",
+            "      talktime: Date.now(),",
+            "      name: event.name",
+            "    }",
+            "  };",
+            "",
+            "  docClient.put(params, function(err, data) {",
+            "    if (err) {",
+            "      console.log('DDB Err:' + err);",
+            "      context.fail(new Error('DynamoDB Error: ' + err));",
+            "    } else {",
+            "      console.log(data);",
+            "      context.done(null, {Satus: 'Success'});",
+            "    }",
+            "",
+            "  });",
+            "",
+            "};"
+            ]]}
+        },
+        "Runtime": "nodejs",
+        "Timeout": "10"
+      },
+      "DependsOn" : "TalkersDynamoDBTable"
+    },
+
+    "GetTalkersFromDynamoDB": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "index.handler",
+        "Role": { "Fn::GetAtt" : ["ZombieLabLambdaRole", "Arn"] },
+        "Code": {
+          "ZipFile": { "Fn::Join": ["\n", [
+            "console.log('Loading function');",
+            "",
+            "var AWS = require('aws-sdk');",
+            "",
+            "var docClient = new AWS.DynamoDB.DocumentClient({",
+            "  region: 'us-west-2'",
+            "});",
+            "",
+            "exports.handler = function(event, context) {",
+            "  console.log('Received event:', JSON.stringify(event, null, 2));",
+            "",
+            "  var params = {",
+            "    TableName: 'talkers',",
+            "    KeyConditionExpression: 'channel = :hkey and talktime > :rkey',",
+            "    ExpressionAttributeValues: {",
+            "      ':hkey': 'default',",
+            "      ':rkey': (Date.now() - 2000)",
+            "    },",
+            "    ConsistentRead: true",
+            "  };",
+            "",
+            "  docClient.query(params, function(err, data) {",
+            "    if (err) {",
+            "      console.log('DDB Err:' + err);",
+            "      context.fail(new Error('DynamoDB Error: ' + err));",
+            "    } else {",
+            "      console.log((Date.now() - 2000));",
+            "      console.log(data);",
+            "      Talkers = [];",
+            "      Pushed = {};",
+            "      data.Items.forEach(function(talker, index, array) {",
+            "        if (Pushed.hasOwnProperty(talker.name) == false) {",
+            "          Talkers.push(talker.name);",
+            "          Pushed[talker.name] = true;",
+            "        }",
+            "",
+            "      });",
+            "      context.done(null, {",
+            "        Talkers: Talkers",
+            "      });",
+            "    }",
+            "",
+            "  });",
+            "};"
+            ]]}
+        },
+        "Runtime": "nodejs",
+        "Timeout": "10"
+      },
+      "DependsOn" : "TalkersDynamoDBTable"
+    },
+
+    "CreateIAMUsers": {
+      "Type": "Custom::CreateIAMUsers",
+        "Condition": "CreateIamResources",
+        "Properties": {
+          "ServiceToken": { "Fn::GetAtt": ["IamUsersFunction", "Arn"] },
+          "StackName": { "Ref": "AWS::StackName" },
+          "region": { "Ref": "AWS::Region" },
+          "IamUsers": { "Ref": "NumberOfIAMUsers"}
+        },
+        "DependsOn": [
+          "ZombieLabLambdaRole"
+        ]
+    },
+
+    "IamUsersFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Condition": "CreateIamResources",
+      "Properties": {
+        "Handler": "IamLambdaHandler.handleIAM",
+        "Role": { "Fn::GetAtt": ["ZombieLabLambdaRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "reinvent-wrk305-2015",
+          "S3Key": "IamUsers.zip"
+        },
+        "Runtime": "nodejs",
+        "Timeout": "30"
+      },
+      "DependsOn": [
+        "ZombieLabLambdaRole"
+      ]
+    }
+  },
+
+  "Outputs": {
+    "MyStackRegion": {
+      "Value": { "Ref": "AWS::Region" },
+      "Description": "The region where the stack was created."
+    },
+    "MyChatRoomURL": {
+      "Value": { "Fn::Join": [ "", [ { "Fn::FindInMap" : [ "AllowedRegions", { "Ref" : "AWS::Region" }, "Region"]}, ".amazonaws.com/", { "Ref": "S3BucketForWebsiteContent" }, "/S3/index.html" ] ] },
+      "Description": "The URL to access your newly created chat."
+    },
+    "DynamoDBMessagesTableName": {
+      "Value": { "Ref": "MessagesDynamoDBTable" },
+      "Description": "Table name of the newly created Messages DynamoDB table that will contain chat messages."
+    },
+    "Bucket": {
+      "Value": { "Ref": "S3BucketForWebsiteContent" },
+      "Description": "The S3 bucket which contains the chat web app contents."
+    },
+    "DynamoDBWriteMessagesLambdaFunction": {
+      "Value": { "Ref": "WriteMessagesToDynamoDB" },
+      "Description": "This Lambda function is used for writing chat messages to the Messages table."
+    },
+    "DynamoDBGetMessagesLambdaFunction": {
+      "Value": { "Ref": "GetMessagesFromDynamoDB" },
+      "Description": "This Lambda function is used for getting chat messages from the Messages table."
+    },
+    "DynamoDBWriteMessagesARN": {
+      "Value": { "Fn::GetAtt": ["WriteMessagesToDynamoDB", "Arn"] },
+      "Description": "The ARN for the Write Messages Lambda function"
+    },
+    "DynamoDBGetMessageARN": {
+      "Value": { "Fn::GetAtt": ["GetMessagesFromDynamoDB", "Arn"] },
+      "Description": "The ARN for the Get Messages Lambda function"
+    },
+    "IamUsersPassword": {
+      "Value": { "Fn::GetAtt": ["CreateIAMUsers", "IamPassword"]},
+      "Description": "The password for your IAM users",
+      "Condition": "CreateIamResources"
+    },
+    "LoginURL": {
+      "Value": { "Fn::Join": [ "", ["https://", {"Ref": "AWS::AccountId"}, ".signin.aws.amazon.com/console"] ]},
+      "Description": "The URL to login to the AWS Management console for the IAM users.",
+      "Condition": "CreateIamResources"
+    },
+    "IamUsersCreated": {
+      "Value": { "Fn::GetAtt": ["CreateIAMUsers", "Users"]},
+      "Description": "The IAM users created to be used for group work",
+      "Condition": "CreateIamResources"
+    },
+    "IamGroupCreated": {
+      "Value": { "Fn::GetAtt": ["CreateIAMUsers", "IamGroup"]},
+      "Description": "The IAM group created for the users",
+      "Condition": "CreateIamResources"
+    },
+    "IamUsersLambdaFunction": {
+      "Value": { "Ref": "IamUsersFunction" },
+      "Description": "This Lambda function is used for creating additional IAM users in th environment.",
+      "Condition": "CreateIamResources"
+    },
+    "IamUsersFunctionARN": {
+      "Value": { "Fn::GetAtt": ["IamUsersFunction", "Arn"] },
+      "Description": "The ARN for the Lambda function that creates additional IAM users.",
+      "Condition": "CreateIamResources"
+    }
+  }
+}
