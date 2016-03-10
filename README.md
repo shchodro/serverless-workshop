@@ -20,7 +20,7 @@ This workshop has several lab exercises that you can complete to extend the func
 * * *
 
 ### Let's Begin! Launch the CloudFormation Stack
-1\. To begin this workshop, click the below 'Deploy to AWS' link. 
+1\. To begin this workshop, click the 'Deploy to AWS' button below. 
 
 [![Launch Zombie Workshop Stack into Oregon with CloudFormation](/Images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=ZombieWorkshopStack&templateURL=https://s3-us-west-2.amazonaws.com/reinvent-wrk305-2015/CreateZombieWorkshop.json)
 
