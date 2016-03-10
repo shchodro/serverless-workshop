@@ -398,7 +398,7 @@ Intel Edison -> SNS topic -> Your AWS Lambda functions subscribed to the topic.
 
 ####Creating the AWS Backend 
 
-**If you are following this guide during a workshop presented by AWS, please ignore the steps below, 1-3\. An SNS topic should already be configured for the workshop particants to consume messages from. That SNS topic ARN will be provided to you.** 
+**If you are following this guide during a workshop presented by AWS, please ignore the steps below, 1-3\. An SNS topic should already be configured for the workshop participants to consume messages from. That SNS topic ARN will be provided to you.** 
 
 1\. Create the SNS Topic. Navigate to the SNS product page within the AWS Management Console and click **Topics** in the left hand menu. Then click on 'Create New Topic'. You will be presented with the following window. Fill in the fields with your desired values and click create topic. 
 ![Create Topic Screenshot](/Images/MotionSensor-createTopic.png) 
