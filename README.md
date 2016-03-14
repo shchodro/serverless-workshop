@@ -9,7 +9,7 @@ This workshop has several lab exercises that you can complete to extend the func
 *   **SMS Integration with Twilio**  
     This exercise wires together Twilio to an existing API Gateway stack. It shows how you can leverage templates in API Gateway to transform form posted data into JSON format for the backend lambda function.
 *   **Search over the chat messages**  
-    This exercise adds an ElasticSearch cluster, which is used to index chat messages streamed from a DynamoDB table.
+    This exercise adds an Elasticsearch cluster, which is used to index chat messages streamed from a DynamoDB table.
 *   **Slack Integration**  
     This exercise integrates Slack into the chat application to send messages from Slack.
 *   **Intel Edison Zombie Motion Sensor**  
@@ -190,16 +190,16 @@ The result should look like the screenshot below:
 
 * * *
 
-## Lab 3 - Search over the chat messages with ElasticSearch Service
+## Lab 3 - Search over the chat messages with Elasticsearch Service
 
-In this section you'll configure an ElasticSearch Service domain to index chat messages in real-time from DynamoDB.
+In this section you'll configure an Elasticsearch Service domain to index chat messages in real-time from DynamoDB.
 
-**ElasticSearch Service Architecture**
-![Overview of ElasticSearch Service Integration](/Images/ElasticSearchServiceOverview.png)
+**Elasticsearch Service Architecture**
+![Overview of Elasticsearch Service Integration](/Images/ElasticSearchServiceOverview.png)
 
-1\. Select the Amazon ElasticSearch icon from the main console page. 
+1\. Select the Amazon Elasticsearch icon from the main console page. 
 
-2\. Create a new Amazon ElasticSearch domain. Provide it a name such as "zombiemessages". Click **Next**.
+2\. Create a new Amazon Elasticsearch domain. Provide it a name such as "zombiemessages". Click **Next**.
 
 3\. On the **Configure Cluster** page, leave the default cluster settings and click **Next**. 
 
@@ -207,9 +207,9 @@ In this section you'll configure an ElasticSearch Service domain to index chat m
 
 5\. Select **Next** to go to the domain review page. 
 
-6\. On the Review page, select **Confirm and create** to create your ElasticSearch cluster.
+6\. On the Review page, select **Confirm and create** to create your Elasticsearch cluster.
 
-7\. The creation of the ElasticSearch cluster takes approximately 10 minutes. 
+7\. The creation of the Elasticsearch cluster takes approximately 10 minutes. 
 
 8\. Take note of the Endpoint once the cluster starts, we'll need that for the Lambda function. 
 ![API Gateway Invoke URL](/Images/Search-Step8.png) 
@@ -224,7 +224,7 @@ In this section you'll configure an ElasticSearch Service domain to index chat m
 
 13\. Paste in the code from the ZombieWorkshopSearchIndexing.js file provided to you.
 
-14\. On line 7 in the code provided, replace ENDPOINT_HERE with the ElasticSearch endpoint created in step 8\. Make sure it starts with https:// 
+14\. On line 7 in the code provided, replace ENDPOINT_HERE with the Elasticsearch endpoint created in step 8\. Make sure it starts with https:// 
 
 15\. Under the Role, create a new DynamoDB event stream role. When a new page opens confirming that you want to create a role, just click **Allow** to proceed. 
 
@@ -239,9 +239,9 @@ In this section you'll configure an ElasticSearch Service domain to index chat m
 20\. After creation, you should see an event source that is similar to the screenshot below:  
 ![API Gateway Invoke URL](/Images/Search-Step20.png) 
 
-21\. In the above step, we configured [DynamoDB Streams](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html) to capture incoming messages on the table and trigger a Lambda function to push them to our ElasticSearch cluster.
+21\. In the above step, we configured [DynamoDB Streams](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html) to capture incoming messages on the table and trigger a Lambda function to push them to our Elasticsearch cluster.
 
-22\. The "lambda_dynamo_streams" role that you selected for your Lambda function earlier does not currently have permissions to write to your ElasticSearch cluster. We will configure that now.
+22\. The "lambda_dynamo_streams" role that you selected for your Lambda function earlier does not currently have permissions to write to your Elasticsearch cluster. We will configure that now.
 
 23\. Navigate to **Identity and Access Management (IAM)** in the AWS Management Console. The icon for this service is green and is listed under the "Security & Identity" section.
 
@@ -281,9 +281,9 @@ In this section you'll configure an ElasticSearch Service domain to index chat m
     ]
 }
 ```
-27\. This new policy you have copied over includes a new Allow action, ```es:*``` which allows the role all actions on the Amazon ElasticSearch Service. Click the **Validate Policy** button and ensure that AWS returns a successful message "The Policy is valid". Then select **Apply Policy** to save it.
+27\. This new policy you have copied over includes a new Allow action, ```es:*``` which allows the role all actions on the Amazon Elasticsearch Service. Click the **Validate Policy** button and ensure that AWS returns a successful message "The Policy is valid". Then select **Apply Policy** to save it.
 
-28\. Now with the IAM permissions in place, your messages posted in the chat from this point forward will be indexed to ElasticSearch. Post a few messages in the chat. You should be able to see that messages are being indexed in the "Indices" section for your cluster in the ElasticSearch Service console.
+28\. Now with the IAM permissions in place, your messages posted in the chat from this point forward will be indexed to Elasticsearch. Post a few messages in the chat. You should be able to see that messages are being indexed in the "Indices" section for your cluster in the Elasticsearch Service console.
 ![API Gateway Invoke URL](/Images/Search-Done.png)
 
 * * *
@@ -501,7 +501,7 @@ In this section you will configure a Lambda function that triggers when messages
 
 2\. Be sure to delete the TwilioProcessing Lambda Function. Also if you no longer plan to use Twilio, please delete your Twilio free trial account and/or phone numbers that you provisioned.
 
-3\. Be sure to delete the ElasticSearch cluster and the associated Lambda function that you created for the ElasticSearch lab. 
+3\. Be sure to delete the Elasticsearch cluster and the associated Lambda function that you created for the Elasticsearch lab. 
 
 4\. Be sure to delete the Lambda function created as a part of the Slack lab and the Slack API resource you created. Also delete Slack if you no longer want an account.
 
