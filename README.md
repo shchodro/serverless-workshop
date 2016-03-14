@@ -195,7 +195,7 @@ The result should look like the screenshot below:
 In this section you'll configure an Elasticsearch Service domain to index chat messages in real-time from DynamoDB.
 
 **Elasticsearch Service Architecture**
-![Overview of Elasticsearch Service Integration](/Images/ElasticSearchServiceOverview.png)
+![Overview of Elasticsearch Service Integration](/Images/ElasticsearchServiceOverview.png)
 
 1\. Select the Amazon Elasticsearch icon from the main console page. 
 
