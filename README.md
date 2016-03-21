@@ -91,10 +91,10 @@ The application uses [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.
 
 18\. Add a new Integration response with a method response status of 200 (leaving the regex blank) 
 
-19\. Select the /zombie/talkers resource 
+19\. Select the /zombie/talkers resource on the left navigation tree.
 ![talker resource](/Images/Typing-Step19.png) 
 
-20\. Select "Enable CORS" in the top right 
+20\. Select "Enable CORS" in the top right of the screen. If there is no "Enable CORS" button, click the "Actions" button then select "Enable CORS" in the dropdown.
 
 21\. Select Enable and Yes to replace the existing values 
 ![talker resource](/Images/Typing-Step21.png) 
@@ -102,7 +102,7 @@ The application uses [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.
 22\. Select Deploy API  
 ![talker resource](/Images/Typing-Step22.png) 
 
-23\. Select the ZombieWorkshopStage deployment and hit the Deploy button. The typing indicator should now show when survivors are typing.  
+23\. Select the ZombieWorkshopStage deployment and hit the Deploy button. The typing indicator should now show when survivors are typing.  As you type, POST requests are being made to the Talkers DynamoDB table as is continuous polling (GET Requests) on that table to see who which survivors are typing.
 ![talker resource](/Images/Typing-Done.png)
 
 * * *
