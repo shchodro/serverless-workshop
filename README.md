@@ -102,8 +102,10 @@ The application uses [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.
 22\. Select Deploy API  
 ![talker resource](/Images/Typing-Step22.png) 
 
-23\. Select the ZombieWorkshopStage deployment and hit the Deploy button. The typing indicator should now show when survivors are typing.  As you type, POST requests are being made to the Talkers DynamoDB table as is continuous polling (GET Requests) on that table to see who which survivors are typing.
+23\. Select the ZombieWorkshopStage deployment and hit the Deploy button. The typing indicator should now show when survivors are typing.  
 ![talker resource](/Images/Typing-Done.png)
+
+As you type, POST requests are being made to the Talkers DynamoDB table as is continuous polling (GET Requests) on that table to see who which survivors are typing.
 
 * * *
 
