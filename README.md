@@ -230,7 +230,7 @@ In this section you'll configure an Elasticsearch Service domain to index chat m
 
 15\. Under the Role, create a new DynamoDB event stream role. When a new page opens confirming that you want to create a role, just click **Allow** to proceed. 
 
-16\. Keep all the other defaults on the page set as is. Select **Next** and then on the Review page, select **Create function** to create your Lambda function. 
+16\. In the "Timeout" field, change the function timeout to **60** seconds. This ensure Lambda can process the batch of messages before Lambda times out. Keep all the other defaults on the page set as is. Select **Next** and then on the Review page, select **Create function** to create your Lambda function. 
 
 17\. Select the "Event Sources" tab for the new ZombieWorkshopSearchIndexing function. 
 
