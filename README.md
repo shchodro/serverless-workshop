@@ -372,7 +372,7 @@ In this section, you'll consume motion sensor events from an IoT device and push
 
 If you wish to utilize the Zombie Sensor as a part of the workshop, this guide will walk you through the following:
 
-* Items required to create the physical Zombie sensor
+* Items required to create the physical Zombie sensor (Ignore this step if a zombie sensor is provided as a part of an AWS workshop)
 * How to create the AWS backend (Simple Notification Service Topic) for the Zombie Sensor  
 * How to install the Node.js device code provided in this workshop onto the device
 
@@ -461,8 +461,7 @@ Intel Edison -> SNS topic -> Your AWS Lambda functions subscribed to the topic.
 
 ####Consuming the SNS Topic Messages with AWS Lambda 
 
-Using the things learned in this workshop, can you develop a Lambda function that alerts survivors in the chat application of zombies? 
-In this section you will configure a Lambda function that triggers when messages are sent from the Edison device to the SNS topic. This will push the messages to the chat application to notify survivors! 
+Using the things learned in this workshop, can you develop a Lambda function that alerts survivors in the chat application when zombies are detected from the zombie sensor? In this section you will configure a Lambda function that triggers when messages are sent from the Edison device to the zombie sensor SNS topic. This function will push the messages to the chat application to notify survivors of zombies! 
 
 1\. Open up the Lambda console and create a new Lambda function.
 
