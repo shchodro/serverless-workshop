@@ -74,7 +74,7 @@ The application uses [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.
 10\. Add a 200 HTTP Status response. Click "Add Response", type "200" in the status code text box and then click the little checkmark to save the method response, as shown below.
 ![Method Response](/Images/Typing-Step10.png) 
 
-11\. Go to the /zombie/talkers/POST method by clicking the "POST" option in the resource tree on the right navigation pane.
+11\. Go to the /zombie/talkers/POST method by clicking the "POST" option in the resource tree on the left navigation pane.
 ![POST Method](/Images/Typing-Step11.png) 
 
 12\. Perform Steps 4-10 again as you did for the GET method , but instead, select the **_[CloudformationTemplateName]_**-WriteTalkersToDynamoDB-**_[XXXXXXXXXX]_** Lambda Function for the Integration Request Lambda function.
@@ -96,7 +96,7 @@ The application uses [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.
 
 20\. Click the "Actions" box and select "Enable CORS" in the dropdown.
 
-21\. Select Enable and Yes to replace the existing values 
+21\. Select Enable and Yes to replace the existing values. You should see all green checkmarks for the CORS options that were enabled, as shown below.
 ![talker resource](/Images/Typing-Step21.png) 
 
 22\. Click the "Actions" box and select Deploy API  
