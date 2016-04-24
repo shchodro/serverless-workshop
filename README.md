@@ -105,7 +105,7 @@ The application uses [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.
 23\. Select the ZombieWorkshopStage deployment and hit the Deploy button. The typing indicator should now show when survivors are typing.  
 ![talker resource](/Images/Typing-Done.png)
 
-As you type, POST requests are being made to the Talkers DynamoDB table as is continuous polling (GET Requests) on that table to see who which survivors are typing.
+As you type, POST requests are being made to the Talkers DynamoDB table to continuously update the table with timestamps for who is typing. Continuous polling (GET Requests) on that table also occurs to check which survivors are typing, which updates the "Users Typing" field in the web app.
 
 * * *
 
@@ -130,10 +130,10 @@ In this section, you’ll wire together Twilio with an existing API Gateway endp
 6\. Now you’ll retrieve your **/twilio** API endpoint from API Gateway and provide it to Twilio to hook up to AWS. Open the AWS Management console in a new tab, and navigate to API Gateway, as illustrated below. Be sure to leave the Twilio tab open as you’ll need it again to finish setup. 
 ![API Gateway in Management Console](/Images/Twilio-Step6.png) 
 
-7\. In the API Gateway console, select your API, **Zombie Workshop API Gateway**. On the top navigation bar, under Resources, click Stages, shown highlighted in orange below. 
+7\. In the API Gateway console, select your API, **Zombie Workshop API Gateway**. On the left navigation tree, click "Stages".
 ![API Gateway Resources Page](/Images/Twilio-Step7.png) 
 
-8\. On the Stages page, expand the Resources tree on the left pane and select **POST** in the **/twilio** resource. The twilio resource is the endpoint that CloudFormation created for SMS messages from your Twilio phone number. You should see an **Invoke URL** displayed for your /twilio resource, as shown below. 
+8\. With "Stages" selected, expand the "Zombie Workshop Stage" by clicking the blue arrow, and select the **POST** method for the **/zombie/twilio** resource. The twilio resource is the endpoint that CloudFormation created for SMS messages from your Twilio phone number. You should see an **Invoke URL** displayed for your **/zombie/twilio** resource, as shown below. 
 ![API Gateway Invoke URL](/Images/Twilio-Step8.png) 
 
 9\. Copy the Invoke URL and return to the Twilio website. On the Twilio page you left open, paste the Invoke URL you copied from API Gateway into the **Request URL** field. Ensure that the request type is set to **HTTP POST**. This is illustrated below. 
@@ -153,7 +153,7 @@ In this section, you’ll wire together Twilio with an existing API Gateway endp
 
 16\. Now that you have created the TwilioProcessing function, you need to connect it to the **POST** method for your /twilio endpoint. Navigate back to the API Gateway console and select **POST** under the **/twilio** endpoint.
 
-17\. Return to the API Gateway console and select the "POST" method for your **/twilio** endpoint. On the **Method Execution** screen for the "POST" method, the "Integration Request" box should show a type of **MOCK** for your /twilio resource.
+17\. On the **Method Execution** screen for the "POST" method, the "Integration Request" box should show a type of **MOCK** for your /twilio resource.
 
 18\. You will now change the **Integration Request** so that instead of integrating with a Mock integration, it will integrate with your TwilioProcessing function. Click **Integration Request**. On the Integration Request screen, change the "Integration type" radio button to **Lambda Function**. In the "Lambda Region" dropdown, select **us-west-2** which is the Region where your Lambda function resides. For the **Lambda Function**, begin typing "TwilioProcessing" and the autofill should display your function. Select **TwilioProcessing** from the autofill. Click **Save**.
 
@@ -161,32 +161,32 @@ In this section, you’ll wire together Twilio with an existing API Gateway endp
 
 20\. Twilio sends data from their API with a content-type of "application/x-www-form-urlencoded", but Lambda requires the content-type to be "application/json". You will configure a Mapping Template so that API Gateway converts the content type of incoming messages into JSON before executing your backend Lambda TwilioProcessing function.
 
-21\. On the Integration Request screen for your /twilio POST method, expand the **Mapping Templates** section and click **Add mapping template**. In the textbox for "Content-Type", input **application/x-www-form-urlencoded** and click the little checkmark button to continue. Once you have clicked the little checkbox, a new section will appear on the right side of the screen called "Input passthrough". Click the pencil icon next to "Input passthrough". In the dropdown that appears, select the **Mapping template** option. 
+21\. On the Integration Request screen for your /twilio POST method, expand the **Body Mapping Templates** section and click **Add mapping template**. In the textbox for "Content-Type", input **application/x-www-form-urlencoded** and click the little checkmark button to continue. Once you have clicked the little checkbox, a new section will appear on the right side of the screen with a dropdown for **Generate Template**. Click that dropdown and select **Method Request Passthrough**.
 
-22\. A "Template" text editor window will appear. In this section you will input a piece of VTL transformation logic to convert the incoming Twilio data to a JSON object. In this text editor, copy the following code into the editor. 
+22\. A "Template" text editor window will appear. In this section you will input a piece of VTL transformation logic to convert the incoming Twilio data to a JSON object. In this text editor, **delete all of the pre-filled content** and copy the following code into the editor. 
 
 ```{"postBody" : "$input.path('$')"}``` 
 
-Leave the "Select a model to generate a template" dropdown as is. After copying the code into the editor, click the little checkmark icon next to the "Mapping template" dropdown. You have now setup the POST method to convert the incoming data to JSON anytime a POST request is made to your /twilio endpoint with a Content-Type of "application/x-www-form-urlencoded". This should look like the screenshot below:
+After copying the code into the editor, click the "Save" button. You have now setup the POST method to convert the incoming data to JSON anytime a POST request is made to your /twilio endpoint with a Content-Type of "application/x-www-form-urlencoded". This should look like the screenshot below:
 ![Twilio Integration Request Mapping Template](/Images/Twilio-Step22.png) 
 
 23\. Now that you have configured the Integration Request to transform incoming messages into JSON, we need to configure the Integration Response to transform outgoing responses into XML since the Twilio API requires XML as a response Content-Type. This step is required so that when you send SMS messages to the Chat Service, it can respond back to your Twilio Phone Number with a confirmation message that you successfully sent SMS to the Survivor Chat Service.
 
-24\. On the "Method Execution" screen for your /twilio POST method, click **Integration Response**. On the "Integration Response" screen, expand the Method Response section by clicking the black arrow. Expand the **Mapping Templates**. You should see a Content-Type of "application/json". We need a Content-Type of XML, not JSON, so delete this Content-Type by clicking the little black minus icon and click **Delete** on the pop-up window. 
+24\. Head back to the Method Execution screen for the twilio POST method. On the "Method Execution" screen for your /twilio POST method, click **Integration Response**. On the "Integration Response" screen, click the black arrow. Expand the **Body Mapping Templates** section. You should see a Content-Type of "application/json". We need a Content-Type of XML, not JSON, so **delete this Content-Type by clicking the little black minus icon** and click **Delete** on the pop-up window. 
 
 25\. Click **Add mapping template** similar to the way you did this in the earlier steps for the Integration Request section. 
 
-26\. In the "Content-Type" text box, insert **application/xml** and click the little black checkmark to continue. Similar to the steps done earlier, we are going to copy VTL mapping logic to convert the response data to XML from JSON. This will result in your /twilio POST method responding to requests with XML format. A new section will appear on the right side of the screen called "Output passthrough". Click the pencil icon next to "Output passthrough". In the dropdown that appears, select the **Mapping template** option. 
-In the text editor, copy the following into the editor: 
+26\. In the "Content-Type" text box, insert **application/xml** and click the little black checkmark to continue. Similar to the steps done earlier, we are going to copy VTL mapping logic to convert the response data to XML from JSON. This will result in your /twilio POST method responding to requests with XML format. After you have created the new content-type, a new section will appear on the right side of the screen with a dropdown for **Generate Template**. Click that dropdown and select **Method Request Passthrough**.
+In the text editor, delete all the code already in there and copy the following into the editor: 
 
 ``` #set($inputRoot = $input.path('$'))<?xml version="1.0" encoding="UTF-8"?><Response><Message><Body>$inputRoot</Body></Message></Response> ``` 
 
-Click the little checkmark icon to continue.
+Click the grey "Save" button to continue.
 
 The result should look like the screenshot below:
 ![Twilio Integration Response Mapping Template](/Images/Twilio-Step26.png) 
 
-27\. Click the blue **Save** button on the screen. Finally click the blue **Deploy API** button on the left side of the API Gateway console to deploy your API. In the Deploy API window, select **ZombieWorkshopStage** from the dropdown and click **Deploy**.
+27\. Then scroll up and click the blue **Save** button on the screen. Finally click the **Actions** button on the left side of the API Gateway console and choose **Deploy API** to deploy your API. In the Deploy API window, select **ZombieWorkshopStage** from the dropdown and click **Deploy**.
 
 28\. You are now ready to test out Twilio integration with your API. Send a text message to your Twilio phone number, you should receive a confirmation response text message and the message you sent should display in the web app chat room as coming from your Twilio Phone Number. You have successfully integrated Twilio text message functionality with API Gateway.
 
