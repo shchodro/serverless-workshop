@@ -329,29 +329,30 @@ In this section, you'll create a slack group and wire it up to the Chat Service.
 
 16\. Click **Create function**. Your Lambda function will be created.
 
-17\. When the function is created, navigate to the API Gateway service in the AWS Management Console. Click into your "Zombie Workshop API Gateway" API. On the left Resources pane, click/highlight the "/zombie" resource so that it is selected and highlighted blue. Then select the "Create Resource" button. For Resource Name, insert **slack** and for Resource Path, insert **slack**. The final resource for your Slack API should be as shown below.
+17\. When the function is created, navigate to the API Gateway service in the AWS Management Console. Click into your "Zombie Workshop API Gateway" API. On the left Resources pane, click/highlight the "/zombie" resource so that it is selected. Then select the **Actions** button and choose "Create Resource". For Resource Name, insert **slack** and for Resource Path, insert **slack**. The final resource for your Slack API should be as shown below.
 ![Create Slack API Resource](/Images/Slack-Step17.png)
 
-18\. Click "Create Resource" to create your slack API resource. For your newly created "/slack" resource, highlight it, then click **Create Method** and select POST from the dropdown. Click the checkmark to create the POST method. On the Setup page, choose an Integration Type of **Lambda Function**, select "us-west-2" for the region dropdown, and type "SlackService" for the name of the Lambda Function. It should autofill your function name. Click **Save**.
+18\. Click "Create Resource" to create your slack API resource. For your newly created "/slack" resource, highlight it, then click **Actions** and select **Create Method** to create the POST method for the slack resource. In the dropdown, select POST. Click the checkmark to create the POST method. On the Setup page, choose an Integration Type of **Lambda Function**, select "us-west-2" for the region dropdown, and type "SlackService" for the name of the Lambda Function. It should autofill your function name. Click **Save** and then **OK** to confirm.
 
 19\. Click **Integration Request** for the /slack POST method. We'll create a Mapping Template to convert the incoming query string parameters from Slack into JSON which is the format Lambda requires for parameters. This mapping template is required so that the incoming Slack message can be converted to the right format.
 
-20\. Expand the Mapping Templates arrow and click **Add mapping template**. In the Content-Type box, enter **application/x-www-form-urlencoded** and click the little checkmark to continue. As you did in the Twilio lab, we're going to copy VTL mapping logic to convert the request to JSON. A new section will appear on the right side of the screen called "Input passthrough". Click the pencil icon next to "Input passthrough". In the dropdown that appears, select the **Mapping template** option. 
-In the text editor, copy the following into the editor: 
+20\. Expand the **Body Mapping Templates** arrow and click **Add mapping template**. In the Content-Type box, enter **application/x-www-form-urlencoded** and click the little checkmark to continue. As you did in the Twilio lab, we're going to copy VTL mapping logic to convert the request to JSON. A new section will appear on the right side of the screen with a dropdown for **Generate Template**. Click that dropdown and select **Method Request Passthrough**.
+
+In the text editor, delete all of the exiting VTL code and copy the following into the editor: 
 
 ```
 {"body": $input.json("$")}
 ```
 
-Click the little checkmark icon to continue. The result should look like the screenshot below:
+Click the grey **Save** button to continue. The result should look like the screenshot below:
 ![Slack Integration Response Mapping Template](/Images/Slack-Step20.png) 
 
-21\. Click the blue **Deploy API** button on the left side of the API Gateway console to deploy your API. In the Deploy API window, select **ZombieWorkshopStage** from the dropdown and click **Deploy**.
+21\. Click the **Actions** button on the left side of the API Gateway console and select **Deploy API** to deploy your API. In the Deploy API window, select **ZombieWorkshopStage** from the dropdown and click **Deploy**.
 
 22\. On the left pane navigation tree, expand the ZombieWorkshopStage tree. Click the **POST** method for the **/zombie/slack** resource. You should see an Invoke URL appear for that resource as shown below.
 ![Slack Resource Invoke URL](/Images/Slack-Step22.png) 
 
-23\. Copy the entire Invoke URL. Navigate back to the Slack Command setup page and insert your Slack API Gateway Invoke URL into the "URL" textbox. Make sure to copy the entire url including "HTTPS://". Scroll to the bottom of the Slack Command screen and click **Save Integration**.
+23\. Copy the entire Invoke URL. Navigate back to the Slack.com website to the Slack Command setup page and insert the Slack API Gateway Invoke URL you just copied into the "URL" textbox. Make sure to copy the entire url including "HTTPS://". Scroll to the bottom of the Slack Command screen and click **Save Integration**.
 
 24\. You're ready to test out the Slack Command integration. In the team chat for your Slack account, type the Slack Command "/survivors" followed by a message. For example, type "/survivors Please help me I am stuck and zombies are trying to get me!". After sending it, you should get a confirmation response message from Slack Bot like the one below:
 ![Slack Command Success](/Images/Slack-Step24.png) 
@@ -359,7 +360,7 @@ Click the little checkmark icon to continue. The result should look like the scr
 Navigate to your zombie survivor chat app and you should see the message from Slack appear. You have configured Slack to send messages to your chat app!
 ![Slack Command in Chat App](/Images/Slack-Step25.png)
 
-**Bonus:** Can you get messages sent to the chat app to appear in the Slack team chat? Give it a try or come back and attempt it later when you've finished the rest of the labs! 
+**Bonus:** You've configured Slack to forward messages to your zombie survivor chat app. But can you get messages sent in the chat app to appear in your Slack chat (i.e.: the reverse)? Give it a try or come back and attempt it later when you've finished the rest of the labs! HINT: You'll want to configure Slack's "Incoming Webhooks" integration feature along with a Lambda code configuration change to make POST requests to the Slack Webhook whenever users send messages in the chat app!
 * * *
 
 ## Lab 5 - Motion Sensor Integration with Intel Edison and Grove
