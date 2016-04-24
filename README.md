@@ -71,35 +71,35 @@ The application uses [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.
 
 9\. Click the Method Response section of the Method Execution Flow 
 
-10\. Add a 200 HTTP Status response 
+10\. Add a 200 HTTP Status response. Click "Add Response", type "200" in the status code text box and then click the little checkmark to save the method response, as shown below.
 ![Method Response](/Images/Typing-Step10.png) 
 
-11\. Go to the /zombie/talkers/POST method 
+11\. Go to the /zombie/talkers/POST method by clicking the "POST" option in the resource tree on the right navigation pane.
 ![POST Method](/Images/Typing-Step11.png) 
 
-12\. Perform Steps 4-10, but instead select the **_[CloudformationTemplateName]_**-WriteTalkersToDynamoDB-**_[XXXXXXXXXX]_** Lambda Function 
+12\. Perform Steps 4-10 again as you did for the GET method , but instead, select the **_[CloudformationTemplateName]_**-WriteTalkersToDynamoDB-**_[XXXXXXXXXX]_** Lambda Function for the Integration Request Lambda function.
 
 13\. Go to the /zombie/talkers/OPTIONS method 
 
 14\. Select the Method Response 
 
-15\. Add a 200 method response 
+15\. Add a 200 method response. Click "Add Response", type "200" in the status code text box and then click the little checkmark to save the method response.
 
 16\. Go back to the OPTIONS method flow and select the Integration Response 
 
 17\. Select the Integration Response 
 
-18\. Add a new Integration response with a method response status of 200 (leaving the regex blank) 
+18\. Add a new Integration response with a method response status of 200. Click the "Method response status" dropdown and select "200". (leaving the regex box blank). Click "Save".
 
 19\. Select the /zombie/talkers resource on the left navigation tree.
 ![talker resource](/Images/Typing-Step19.png) 
 
-20\. Select "Enable CORS" in the top right of the screen. If there is no "Enable CORS" button, click the "Actions" button then select "Enable CORS" in the dropdown.
+20\. Click the "Actions" box and select "Enable CORS" in the dropdown.
 
 21\. Select Enable and Yes to replace the existing values 
 ![talker resource](/Images/Typing-Step21.png) 
 
-22\. Select Deploy API  
+22\. Click the "Actions" box and select Deploy API  
 ![talker resource](/Images/Typing-Step22.png) 
 
 23\. Select the ZombieWorkshopStage deployment and hit the Deploy button. The typing indicator should now show when survivors are typing.  
