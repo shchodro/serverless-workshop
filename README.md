@@ -301,9 +301,9 @@ In this section, you'll create a slack group and wire it up to the Chat Service.
 
 2\. Once logged into Slack, navigate to [https://slack.com/apps](https://slack.com/apps) and click **Build your own** near the top of the page. Then on the next screen, select **Make a Custom Integration**.
 
-3\. On the "Custom Integration" page, select **Slack Commands** to create a Slack Command. Slash commands allow you to define a command that will inform Slack to forward your message to an external source with a webhook. In this case you'll configure your Slash Command to make a POST request to an external URL (the URL for your API Gateway endpoint).
+3\. On the "Custom Integration" page, select **Slash Commands** to create a Slack Command. Slash commands allow you to define a command that will inform Slack to forward your message to an external source with a webhook. In this case you'll configure your Slash Command to make a POST request to an external URL (the URL for your API Gateway endpoint).
 
-4\. On the Slash Commands page, define a command in the **Commands** text box. Insert **/survivors** as your Slack Command. Then select "Add Slash Command Integration" to save it.
+4\. On the Slash Commands page, define a command in the **Commands** text box. Insert **/survivors** as your Slash Command. Then select "Add Slash Command Integration" to save it.
 
 5\. On the Integration Settings page, make sure the **Method** section has "POST" selected from the dropdown options. Then scroll to the **Token** section and copy the Token (or generate a new one) to a text file as you'll need it in the following steps. 
 
@@ -352,9 +352,9 @@ Click the grey **Save** button to continue. The result should look like the scre
 22\. On the left pane navigation tree, expand the ZombieWorkshopStage tree. Click the **POST** method for the **/zombie/slack** resource. You should see an Invoke URL appear for that resource as shown below.
 ![Slack Resource Invoke URL](/Images/Slack-Step22.png) 
 
-23\. Copy the entire Invoke URL. Navigate back to the Slack.com website to the Slack Command setup page and insert the Slack API Gateway Invoke URL you just copied into the "URL" textbox. Make sure to copy the entire url including "HTTPS://". Scroll to the bottom of the Slack Command screen and click **Save Integration**.
+23\. Copy the entire Invoke URL. Navigate back to the Slack.com website to the Slash Command setup page and insert the Slack API Gateway Invoke URL you just copied into the "URL" textbox. Make sure to copy the entire url including "HTTPS://". Scroll to the bottom of the Slash Command screen and click **Save Integration**.
 
-24\. You're ready to test out the Slack Command integration. In the team chat for your Slack account, type the Slack Command "/survivors" followed by a message. For example, type "/survivors Please help me I am stuck and zombies are trying to get me!". After sending it, you should get a confirmation response message from Slack Bot like the one below:
+24\. You're ready to test out the Slash Command integration. In the team chat for your Slack account, type the Slash Command "/survivors" followed by a message. For example, type "/survivors Please help me I am stuck and zombies are trying to get me!". After sending it, you should get a confirmation response message from Slack Bot like the one below:
 ![Slack Command Success](/Images/Slack-Step24.png) 
 
 Navigate to your zombie survivor chat app and you should see the message from Slack appear. You have configured Slack to send messages to your chat app!
