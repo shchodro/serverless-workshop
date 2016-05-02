@@ -118,14 +118,14 @@ In this section, you’ll wire together Twilio with an existing API Gateway endp
 
 1\. Sign up for a free trial Twilio account at https://www.twilio.com/try-twilio. 
 
-2\. Once you have created your account, login to the Twilio console and navigate to the **Get Started with Phone Numbers** page as shown below. 
+2\. Once you have created your account, login to the Twilio console and navigate to the Home icon on the left navigation pane. On the Home screen/console dashboard, scroll down to the **Phone Numbers** section and click "Phone Numbers".
 ![Manage Twilio Phone Number](/Images/Twilio-Step2.png) 
 
-3\. Select the red **Get your first Twilio phone number** button to assign a phone number to your account. We’re going to generate a 10-digit phone number in this lab, but a short-code would also work if preferred. This number should be enabled for voice and messaging by default. 
+3\. On the Phone Numbers screen, click "Get Started" to assign a phone number to your account. Then click the red "Get your first Twilio phone number" button. We’re going to generate a 10-digit phone number in this lab, but a short-code would also work if preferred. This number should be enabled for voice and messaging by default. A popup will appear with your new phone number, click "Choose this number". **These are US phone numbers. You can provision an international phone number if doing this workshop outside the U.S. Twilio terms and conditions and pricing applies. Please see their website for those details.
 
-4\. Once you’ve received a phone number, navigate to the **Manage Numbers** page and click on your phone number, which will take you to the properties page for that number. 
+4\. Once you’ve received a phone number, click the **Manage Numbers** button on the left navigation pane. Click on your phone number, which will take you to the properties page for that number. 
 
-5\. Scroll to the bottom of the properties page, to the messaging section. In the **Configure With** section, select the **URL** radio button option. 
+5\. Scroll to the bottom of the properties page, to the messaging section. In the **Configure With** dropdown, select the **Webhooks/TwiML** option. 
 
 6\. Now you’ll retrieve your **/twilio** API endpoint from API Gateway and provide it to Twilio to hook up to AWS. Open the AWS Management console in a new tab, and navigate to API Gateway, as illustrated below. Be sure to leave the Twilio tab open as you’ll need it again to finish setup. 
 ![API Gateway in Management Console](/Images/Twilio-Step6.png) 
@@ -136,7 +136,7 @@ In this section, you’ll wire together Twilio with an existing API Gateway endp
 8\. With "Stages" selected, expand the "Zombie Workshop Stage" by clicking the blue arrow, and select the **POST** method for the **/zombie/twilio** resource. The twilio resource is the endpoint that CloudFormation created for SMS messages from your Twilio phone number. You should see an **Invoke URL** displayed for your **/zombie/twilio** resource, as shown below. 
 ![API Gateway Invoke URL](/Images/Twilio-Step8.png) 
 
-9\. Copy the Invoke URL and return to the Twilio website. On the Twilio page you left open, paste the Invoke URL you copied from API Gateway into the **Request URL** field. Ensure that the request type is set to **HTTP POST**. This is illustrated below. 
+9\. Copy the Invoke URL and return to the Twilio website. On the Twilio page you left open, paste the Invoke URL you copied from API Gateway into the textbox next to label **A message comes in**. Ensure that the request type is set to **HTTP POST**. This is illustrated below. 
 ![Twilio Request URL](/Images/Twilio-Step9.png) 
 
 10\. Click **Save** to finalize the setup connecting Twilio to your /twilio URL. 
