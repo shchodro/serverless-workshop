@@ -9,8 +9,8 @@
   },
 
   "Parameters": {
-    "NumberOfIAMUsers": {
-      "Description": "Number of IAM users to be created for this stack",
+    "NumberOfTeammates": {
+      "Description": "How many teammates do you have? Input that here, one for each of your teammates. Don't include yourself",
       "Type": "Number",
       "MinValue": "0",
       "MaxValue": "10",
@@ -22,7 +22,7 @@
     "CreateIamResources": {
       "Fn::Not": [{
         "Fn::Equals": [
-          {"Ref": "NumberOfIAMUsers"}, "0"
+          {"Ref": "NumberOfTeammates"}, "0"
         ]
       }]
     }
@@ -416,7 +416,7 @@
           "ServiceToken": { "Fn::GetAtt": ["IamUsersFunction", "Arn"] },
           "StackName": { "Ref": "AWS::StackName" },
           "region": { "Ref": "AWS::Region" },
-          "IamUsers": { "Ref": "NumberOfIAMUsers"}
+          "IamUsers": { "Ref": "NumberOfTeammates"}
         },
         "DependsOn": [
           "ZombieLabLambdaRole"

@@ -26,7 +26,7 @@ The [Zombie Microservices Workshop](http://aws.amazon.com/events/zombie-microser
 
 2\. On the "Specify Details" page, your Stack is prepopulated with the name "ZombieWorkshopStack".
 
-3\. For the parameter section, if you want to develop with a team and would like to create IAM Users in your account to grant them access, then specify how many teammates/users you want to be created in the **NumberOfIAMUsers** box. Otherwise, leave it defaulted to 0 and no additional users will be created. Click **Next**.
+3\. For the parameter section, if you want to develop with a team and would like to create IAM Users in your account to grant them access, then specify how many teammates/users you want to be created in the **NumberOfTeammates** box. Otherwise, leave it defaulted to 0 and no additional users will be created. Click **Next**. *If you create IAM users, an IAM group will also be created and those users will be added to that group. On deletion of the stack, those resources will be deleted for you*
 
 4\. On the "Options" page, leave the defaults and click **Next**.
 
