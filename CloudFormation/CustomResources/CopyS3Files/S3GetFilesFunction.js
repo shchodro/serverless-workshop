@@ -2,15 +2,17 @@ var aws = require("aws-sdk");
 
 exports.handler = function(event, context) {
   console.log("REQUEST RECEIVED:\n", JSON.stringify(event));
-  aws.config.update({
-    region: event.ResourceProperties.S3Region
-  })
+
+  // Set region to the destination region where the user's bucket is hosted.
+  //aws.config.update({region: event.ResourceProperties.S3Region})
+  aws.config.update({region: event.ResourceProperties.S3Region})
   var responseData = {};
   var responseStatus = "FAILED";  // Start out with response of FAILED until we confirm SUCCESS explicitly.
 
   var s3 = new aws.S3();
-  var srcS3Bucket = "reinvent-wrk305-2015";  // S3 bucket where AWS has hosted the lab content
-  var dstS3Bucket = event.ResourceProperties.WebsiteBucketCreatedEarlier; // Bucket name that is passed in from CloudFormation.
+  var srcS3Bucket = event.ResourceProperties.BucketName;  // S3 bucket where AWS has hosted the lab content
+  var dstS3Bucket = event.ResourceProperties.WebsiteBucketCreatedEarlier;
+
   var keys = [
     "S3/index.html",
     "S3/assets/css/zombie.css",
@@ -23,7 +25,11 @@ exports.handler = function(event, context) {
     "S3/app/controllers/chatMessageController.js",
     "S3/app/controllers/chatPanelController.js",
     "S3/app/controllers/talkersPanelController.js",
-    "S3/app/controllers/loginController.js"
+    "S3/app/controllers/loginController.js",
+    "WK305_Gateway.zip",
+    "ZombieGetMessages.zip",
+    "ZombiePostMessage.zip",
+    "IamUsers.zip"
   ];  // Objects that are copied from AWS to user's bucket
 
   // CloudFormation cannot delete S3 bucket if there are objects in it.
@@ -62,7 +68,7 @@ exports.handler = function(event, context) {
   }
 
   else { // if request type is CREATE or UPDATE, we get files into user's S3 bucket.
-    for (var i = 0; i < keys.length; ++i) {
+    for (var i in keys) {
       var srcS3Key = keys[i];
       var dstS3Key = srcS3Key;
 
@@ -80,10 +86,12 @@ exports.handler = function(event, context) {
         if (err) {
           responseData = {Error: 'Object ' + srcS3Key + ' failed to transfer to your bucket.'};
           console.log(responseData.Error + ':\\n', err);
+          sendResponse(event, context, responseStatus, responseData);
         }
         else {
+          responseStatus = "SUCCESS";
           console.log(data);
-          sendResponse(event, context, "SUCCESS");
+          sendResponse(event, context, responseStatus, responseData);
         }
       });
     }

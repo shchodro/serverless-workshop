@@ -1,9 +1,6 @@
 // Processes incoming messages for Zombie chat service
 var aws = require('aws-sdk');
-var ddb = new aws.DynamoDB(
-    {region: "us-west-2",
-    params: {TableName: "messages"}}
-);
+var ddb;
 var querystring = require('querystring');
 
 var theContext;
@@ -16,20 +13,21 @@ var channel = 'default';
 
 
 exports.handler = function(event, context) {
+    init(context);
     theContext = context;
-    
+
     if(event.message == null || event.message == 'null' || event.name == null || event.name == 'null') {
-        return context.fail("Message and Name cannot be null");  
+        return context.fail("Message and Name cannot be null");
     } else {
         message = event.message;
         from = event.name;
     }
-    
+
     if (event.timestamp == null || event.timestamp == 'null') {
         event.timestamp = "" + new Date().getTime();
         timestamp = event.timestamp;
     }
-    
+
     /**
      * For Debubugging input params to the lambda function
     console.log('Message: ' + message);
@@ -45,9 +43,21 @@ exports.handler = function(event, context) {
             "name":{"S":from}
         }
     };
-    
+
     dynamoPut(DDBparams);
 };
+
+function init(context) {
+  if(!ddb) {
+    console.log("Initializing DynamoDB client.");
+    var stackName = context.functionName.split('-z0mb1es-')[0];
+    var stackRegion = context.functionName.split('-WriteMessagesToDynamoDB-')[1];
+    ddb = new aws.DynamoDB({
+      region: stackRegion,
+      params: { TableName: stackName + "-messages" }
+    });
+  }
+}
 
 function dynamoPut(params){
     console.log("Putting item into DynamoDB");

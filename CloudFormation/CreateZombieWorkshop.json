@@ -1,12 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "AWS CloudFormation template to launch resources for a serverless group chat. This was designed for ReInvent 2015 (WRK305: Zombie Apocalypse Survival: Building Serverless Microservices) ",
-
-  "Mappings": {
-    "AllowedRegions": {
-      "us-west-2": {"Region": "https://s3-us-west-2"}
-    }
-  },
+  "Description": "AWS CloudFormation template to launch resources for a serverless group chat. This was designed for the AWS Zombie Apocalypse Workshop: Building Serverless Microservices",
 
   "Parameters": {
     "NumberOfTeammates": {
@@ -15,6 +9,31 @@
       "MinValue": "0",
       "MaxValue": "10",
       "Default": "0"
+    }
+  },
+
+  "Mappings": {
+    "AllowedRegions": {
+      "us-west-2": { 
+        "S3Endpoint": "https://s3-us-west-2", 
+        "S3ContentsBucket": "aws-zombie-workshop-us-west-2" 
+      },
+      "us-east-1": { 
+        "S3Endpoint": "https://s3", 
+        "S3ContentsBucket": "aws-zombie-workshop-us-east-1" 
+      },
+      "eu-west-1": {
+        "S3Endpoint": "https://s3-eu-west-1", 
+        "S3ContentsBucket": "aws-zombie-workshop-eu-west-1" 
+      },
+      "eu-central-1": { 
+        "S3Endpoint": "https://s3-eu-central-1", 
+        "S3ContentsBucket": "aws-zombie-workshop-eu-central-1" 
+      },
+      "ap-northeast-1": { 
+        "S3Endpoint": "https://s3-ap-northeast-1", 
+        "S3ContentsBucket": "aws-zombie-workshop-ap-northeast-1"
+      }
     }
   },
 
@@ -83,7 +102,7 @@
             {
               "Effect": "Allow",
               "Action": ["apigateway:*"],
-              "Resource": ["*"]
+              "Resource": ["*", "arn:aws:apigateway:*::/*"]
             },
             {
               "Effect": "Allow",
@@ -137,7 +156,7 @@
     "MessagesDynamoDBTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
-        "TableName": "messages",
+        "TableName": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "messages"]]},
         "AttributeDefinitions": [
           {
             "AttributeName": "channel",
@@ -162,7 +181,7 @@
     "TalkersDynamoDBTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
-        "TableName": "talkers",
+        "TableName": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "talkers"]]},
         "AttributeDefinitions": [
           {
             "AttributeName": "channel",
@@ -201,7 +220,7 @@
       "Properties": {
         "ServiceToken": { "Fn::GetAtt" : ["S3GetFilesFunction", "Arn"] },
         "StackName": { "Ref": "AWS::StackName" },
-        "BucketName": "reinvent-wrk305-2015",
+        "BucketName": { "Fn::FindInMap" : [ "AllowedRegions", { "Ref" : "AWS::Region" }, "S3ContentsBucket"]},
         "WebsiteBucketCreatedEarlier": { "Ref" : "S3BucketForWebsiteContent" },
         "S3Region": { "Ref" : "AWS::Region" }
       },
@@ -217,11 +236,11 @@
         "Handler": "S3GetFilesFunction.handler",
         "Role": { "Fn::GetAtt": ["ZombieLabLambdaRole", "Arn"] },
         "Code": {
-          "S3Bucket": "reinvent-wrk305-2015",
+          "S3Bucket": { "Fn::FindInMap" : [ "AllowedRegions", { "Ref" : "AWS::Region" }, "S3ContentsBucket"]},
           "S3Key": "S3GetFilesFunction.zip"
         },
         "Runtime": "nodejs",
-        "Timeout": "60"
+        "Timeout": "120"
       },
       "DependsOn": [
         "ZombieLabLambdaRole",
@@ -238,7 +257,8 @@
         "region": { "Ref": "AWS::Region" },
         "iamrole": { "Fn::GetAtt": ["ZombieLabLambdaRole", "Arn"] },
         "s3bucket": { "Ref": "S3BucketForWebsiteContent" },
-        "s3key": "S3/assets/js/constants.js"
+        "s3key": "S3/assets/js/constants.js",
+        "apiname": { "Fn::Join": [ "", [ { "Ref": "AWS::StackName" }, "- Zombie Workshop API Gateway" ] ] }
       },
       "DependsOn": [
         "S3BucketForWebsiteContent",
@@ -256,7 +276,7 @@
         "Handler": "LambdaHandler.handleGatewayEvent",
         "Role": { "Fn::GetAtt" : ["ZombieLabLambdaRole", "Arn"] },
         "Code": {
-          "S3Bucket": "reinvent-wrk305-2015",
+          "S3Bucket": { "Ref": "S3BucketForWebsiteContent" },
           "S3Key": "WK305_Gateway.zip"
         },
         "Runtime": "nodejs",
@@ -265,7 +285,9 @@
       },
       "DependsOn": [
         "MessagesDynamoDBTable",
-        "ZombieLabLambdaRole"
+        "ZombieLabLambdaRole",
+        "S3BucketForWebsiteContent",
+        "PutWebsiteFilesInS3"
       ]
     },
 
@@ -274,14 +296,19 @@
       "Properties": {
         "Handler": "ZombiePostMessage.handler",
         "Role": { "Fn::GetAtt" : ["ZombieLabLambdaRole", "Arn"] },
+        "FunctionName": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "z0mb1es", "WriteMessagesToDynamoDB", {"Ref": "AWS::Region"}]]},
         "Code": {
-          "S3Bucket": "reinvent-wrk305-2015",
+          "S3Bucket": { "Ref" : "S3BucketForWebsiteContent" },
           "S3Key": "ZombiePostMessage.zip"
         },
         "Runtime": "nodejs",
         "Timeout": "60"
       },
-      "DependsOn": "MessagesDynamoDBTable"
+      "DependsOn": [
+        "MessagesDynamoDBTable",
+        "S3BucketForWebsiteContent",
+        "PutWebsiteFilesInS3"
+      ]
     },
 
     "GetMessagesFromDynamoDB": {
@@ -289,14 +316,19 @@
       "Properties": {
         "Handler": "ZombieGetMessages.handler",
         "Role": { "Fn::GetAtt" : ["ZombieLabLambdaRole", "Arn"] },
+        "FunctionName": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "z0mb1es", "GetMessagesFromDynamoDB", {"Ref": "AWS::Region"}]]},
         "Code": {
-          "S3Bucket": "reinvent-wrk305-2015",
+          "S3Bucket": { "Ref" : "S3BucketForWebsiteContent" },
           "S3Key": "ZombieGetMessages.zip"
         },
         "Runtime": "nodejs",
         "Timeout": "60"
       },
-      "DependsOn" : "MessagesDynamoDBTable"
+      "DependsOn" : [
+        "MessagesDynamoDBTable",
+        "S3BucketForWebsiteContent",
+        "PutWebsiteFilesInS3"
+      ]
     },
 
     "WriteTalkersToDynamoDB": {
@@ -304,44 +336,45 @@
       "Properties": {
         "Handler": "index.handler",
         "Role": { "Fn::GetAtt" : ["ZombieLabLambdaRole", "Arn"] },
+        "FunctionName": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "z0mb1es", "WriteTalkersToDynamoDB", {"Ref": "AWS::Region"}]]},
         "Code": {
-          "ZipFile": { "Fn::Join": ["\n", [
-            "console.log('Loading function');",
-            "",
-            "var AWS = require('aws-sdk');",
-            "",
-            "var docClient = new AWS.DynamoDB.DocumentClient({",
-            "  region: 'us-west-2'",
-            "});",
-            "",
-            "exports.handler = function(event, context) {",
-            "  console.log('Received event:', JSON.stringify(event, null, 2));",
-            "",
-            "  if (event.name == null) {",
-            "    context.fail(new Error('name cannot be null: ' + JSON.stringify(event, null, 2)));",
-            "  }",
-            "",
-            "  var params = {",
-            "    TableName: 'talkers',",
-            "    Item: {",
-            "      channel: 'default',",
-            "      talktime: Date.now(),",
-            "      name: event.name",
-            "    }",
-            "  };",
-            "",
-            "  docClient.put(params, function(err, data) {",
-            "    if (err) {",
-            "      console.log('DDB Err:' + err);",
-            "      context.fail(new Error('DynamoDB Error: ' + err));",
-            "    } else {",
-            "      console.log(data);",
-            "      context.done(null, {Satus: 'Success'});",
-            "    }",
-            "",
-            "  });",
-            "",
-            "};"
+          "ZipFile": { "Fn::Join": ["", [
+            "console.log('Loading function');\n",
+            "\n",
+            "var AWS = require('aws-sdk');\n",
+            "\n",
+            "var docClient = new AWS.DynamoDB.DocumentClient({\n",
+            "  region: '", {"Ref": "AWS::Region"}, "',\n",
+            "});\n",
+            "\n",
+            "exports.handler = function(event, context) {\n",
+            "  console.log('Received event:', JSON.stringify(event, null, 2));\n",
+            "\n",
+            "  if (event.name == null) {\n",
+            "    context.fail(new Error('name cannot be null: ' + JSON.stringify(event, null, 2)));\n",
+            "  }\n",
+            "\n",
+            "  var params = {\n",
+            "    TableName: '", {"Ref": "AWS::StackName"}, "-talkers',\n",
+            "    Item: {\n",
+            "      channel: 'default',\n",
+            "      talktime: Date.now(),\n",
+            "      name: event.name\n",
+            "    }\n",
+            "  };\n",
+            "\n",
+            "  docClient.put(params, function(err, data) {\n",
+            "    if (err) {\n",
+            "      console.log('DDB Err:' + err);\n",
+            "      context.fail(new Error('DynamoDB Error: ' + err));\n",
+            "    } else {\n",
+            "      console.log(data);\n",
+            "      context.done(null, {Satus: 'Success'});\n",
+            "    }\n",
+            "\n",
+            "  });\n",
+            "\n",
+            "};\n"
             ]]}
         },
         "Runtime": "nodejs",
@@ -355,52 +388,53 @@
       "Properties": {
         "Handler": "index.handler",
         "Role": { "Fn::GetAtt" : ["ZombieLabLambdaRole", "Arn"] },
+        "FunctionName": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "z0mb1es", "GetTalkersToDynamoDB", {"Ref": "AWS::Region"}]]},
         "Code": {
-          "ZipFile": { "Fn::Join": ["\n", [
-            "console.log('Loading function');",
-            "",
-            "var AWS = require('aws-sdk');",
-            "",
-            "var docClient = new AWS.DynamoDB.DocumentClient({",
-            "  region: 'us-west-2'",
-            "});",
-            "",
-            "exports.handler = function(event, context) {",
-            "  console.log('Received event:', JSON.stringify(event, null, 2));",
-            "",
-            "  var params = {",
-            "    TableName: 'talkers',",
-            "    KeyConditionExpression: 'channel = :hkey and talktime > :rkey',",
-            "    ExpressionAttributeValues: {",
-            "      ':hkey': 'default',",
-            "      ':rkey': (Date.now() - 2000)",
-            "    },",
-            "    ConsistentRead: true",
-            "  };",
-            "",
-            "  docClient.query(params, function(err, data) {",
-            "    if (err) {",
-            "      console.log('DDB Err:' + err);",
-            "      context.fail(new Error('DynamoDB Error: ' + err));",
-            "    } else {",
-            "      console.log((Date.now() - 2000));",
-            "      console.log(data);",
-            "      Talkers = [];",
-            "      Pushed = {};",
-            "      data.Items.forEach(function(talker, index, array) {",
-            "        if (Pushed.hasOwnProperty(talker.name) == false) {",
-            "          Talkers.push(talker.name);",
-            "          Pushed[talker.name] = true;",
-            "        }",
-            "",
-            "      });",
-            "      context.done(null, {",
-            "        Talkers: Talkers",
-            "      });",
-            "    }",
-            "",
-            "  });",
-            "};"
+          "ZipFile": { "Fn::Join": ["", [
+            "console.log('Loading function');\n",
+            "\n",
+            "var AWS = require('aws-sdk');\n",
+            "\n",
+            "var docClient = new AWS.DynamoDB.DocumentClient({\n",
+            "  region: '", {"Ref": "AWS::Region"}, "',\n",
+            "});\n",
+            "\n",
+            "exports.handler = function(event, context) {\n",
+            "  console.log('Received event:', JSON.stringify(event, null, 2));\n",
+            "\n",
+            "  var params = {\n",
+            "    TableName: '", {"Ref": "AWS::StackName"}, "-talkers',\n",
+            "    KeyConditionExpression: 'channel = :hkey and talktime > :rkey',\n",
+            "    ExpressionAttributeValues: {\n",
+            "      ':hkey': 'default',\n",
+            "      ':rkey': (Date.now() - 2000)\n",
+            "    },\n",
+            "    ConsistentRead: true\n",
+            "  };\n",
+            "\n",
+            "  docClient.query(params, function(err, data) {\n",
+            "    if (err) {\n",
+            "      console.log('DDB Err:' + err);\n",
+            "      context.fail(new Error('DynamoDB Error: ' + err));\n",
+            "    } else {\n",
+            "      console.log((Date.now() - 2000));\n",
+            "      console.log(data);\n",
+            "      Talkers = [];\n",
+            "      Pushed = {};\n",
+            "      data.Items.forEach(function(talker, index, array) {\n",
+            "        if (Pushed.hasOwnProperty(talker.name) == false) {\n",
+            "          Talkers.push(talker.name);\n",
+            "          Pushed[talker.name] = true;\n",
+            "        }\n",
+            "\n",
+            "      });\n",
+            "      context.done(null, {\n",
+            "        Talkers: Talkers\n",
+            "      });\n",
+            "    }\n",
+            "\n",
+            "  });\n",
+            "};\n"
             ]]}
         },
         "Runtime": "nodejs",
@@ -430,14 +464,17 @@
         "Handler": "IamLambdaHandler.handleIAM",
         "Role": { "Fn::GetAtt": ["ZombieLabLambdaRole", "Arn"] },
         "Code": {
-          "S3Bucket": "reinvent-wrk305-2015",
+          "S3Bucket": { "Ref" : "S3BucketForWebsiteContent" },
           "S3Key": "IamUsers.zip"
         },
         "Runtime": "nodejs",
-        "Timeout": "30"
+        "Timeout": "60"
       },
       "DependsOn": [
-        "ZombieLabLambdaRole"
+        "ZombieLabLambdaRole",
+        "S3BucketForWebsiteContent",
+        "PutWebsiteFilesInS3",
+        "S3GetFilesFunction"
       ]
     }
   },
@@ -448,7 +485,7 @@
       "Description": "The region where the stack was created."
     },
     "MyChatRoomURL": {
-      "Value": { "Fn::Join": [ "", [ { "Fn::FindInMap" : [ "AllowedRegions", { "Ref" : "AWS::Region" }, "Region"]}, ".amazonaws.com/", { "Ref": "S3BucketForWebsiteContent" }, "/S3/index.html" ] ] },
+      "Value": { "Fn::Join": [ "", [ { "Fn::FindInMap" : [ "AllowedRegions", { "Ref" : "AWS::Region" }, "S3Endpoint"]}, ".amazonaws.com/", { "Ref": "S3BucketForWebsiteContent" }, "/S3/index.html" ] ] },
       "Description": "The URL to access your newly created chat."
     },
     "DynamoDBMessagesTableName": {
@@ -466,6 +503,14 @@
     "DynamoDBGetMessagesLambdaFunction": {
       "Value": { "Ref": "GetMessagesFromDynamoDB" },
       "Description": "This Lambda function is used for getting chat messages from the Messages table."
+    },
+    "WriteTalkersToDynamoDBLambdaFunction": {
+      "Value": { "Ref": "WriteTalkersToDynamoDB" },
+      "Description": "This Lambda function is used for writing talkers to the Talkers table."
+    },
+    "GetTalkersFromDynamoDBLambdaFunction": {
+      "Value": { "Ref": "GetTalkersFromDynamoDB" },
+      "Description": "This Lambda function is used for getting talkers from the Talkers table."
     },
     "DynamoDBWriteMessagesARN": {
       "Value": { "Fn::GetAtt": ["WriteMessagesToDynamoDB", "Arn"] },
@@ -504,6 +549,10 @@
       "Value": { "Fn::GetAtt": ["IamUsersFunction", "Arn"] },
       "Description": "The ARN for the Lambda function that creates additional IAM users.",
       "Condition": "CreateIamResources"
+    },
+    "BucketCopiedContentsFrom": {
+      "Value": { "Fn::FindInMap" : [ "AllowedRegions", { "Ref" : "AWS::Region" }, "S3ContentsBucket"]},
+      "Description": "This is the local region AWS bucket where your files were copied from."  
     }
   }
 }

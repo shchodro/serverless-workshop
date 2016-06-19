@@ -13,6 +13,7 @@ var getmessagearn;
 var postmessagearn;
 var iamRole;
 var apigatewayuuid;
+var apiName;
 
 // Variables for the callback...
 var theEvent;
@@ -32,6 +33,7 @@ module.exports = {
         postmessagearn = event.ResourceProperties.postmessagelambdaapiuri;
         iamRole = event.ResourceProperties.iamrole;
         apigatewayuuid = event.StackId;
+        apiName = event.ResourceProperties.apiname;
 
         AWS.config.update({region: region});
         apigateway = new AWS.APIGateway();
@@ -61,8 +63,7 @@ function createGatewayImplementation() {
         createTwilioIntegrationResponses,
         createIntegrations,
         createIntegrationResponses,
-        createDeployment,
-        updateStage
+        createDeployment
     ],
 	done);
 }
@@ -71,7 +72,7 @@ function createRestAPI(callback) {
 	console.log('Creating REST API');
 
 	var params = {
-        name: 'Zombie Workshop API Gateway',
+        name: apiName,
         description: apigatewayuuid
     };
     apigateway.createRestApi(params, function(err, data) {
@@ -339,52 +340,13 @@ function createDeployment(callback) {
 	var params = {
         restApiId: restAPIId, /* required */
         stageName: 'ZombieWorkshopStage', /* required */
-        cacheClusterEnabled: true,
-        cacheClusterSize: '0.5',
+        cacheClusterEnabled: false,
         description: 'ZombieWorkshopStage deployment',
         stageDescription: 'ZombieWorkshopStage deployment'
 	};
 	apigateway.createDeployment(params, function(err, data) {
         if(!err) {
 		  callback(null);
-        }
-        else {
-            callback(err);
-        }
-	});
-}
-
-function updateStage(callback) {
-	console.log('Updating Stage for custom method settings');
-	var params = {
-        restApiId: restAPIId, /* required */
-        stageName: 'ZombieWorkshopStage', /* required */
-        patchOperations: [
-            {
-                op: 'replace',
-                path: '/~1zombie~1message/GET/caching/enabled',
-                value: 'true'
-            },
-            {
-                op: 'replace',
-                path: '/~1zombie~1message/POST/caching/enabled',
-                value: 'false'
-            },
-            {
-                op: 'replace',
-                path: '/~1zombie~1message/GET/caching/ttlInSeconds',
-                value: '2'
-            },
-            {
-                op: 'replace',
-                path: '/~1zombie~1message/POST/caching/ttlInSeconds',
-                value: '0'
-            }
-        ]
-    };
-	apigateway.updateStage(params, function(err, data) {
-        if(!err) {
-            callback(null);
         }
         else {
             callback(err);
