@@ -54,7 +54,7 @@ Tokyo (ap-northeast-1) | [![Launch Zombie Workshop Stack into Tokyo with CloudFo
 
 **The baseline chat application is now configured and working! There is still important functionality missing and the Lambda Signal Corps needs you to build it out...so get started below!**
 
-*This workshop does not utilize API Gateway Cache. Please **KEEP THIS FEATURE TURNED OFF** as it is not covered under the AWS Free Tier and will incur additional charges.*
+*This workshop does not utilize API Gateway Cache. Please KEEP THIS FEATURE TURNED OFF as it is not covered under the AWS Free Tier and will incur additional charges.*
 
 ## Lab 1 - Typing Indicator
 
