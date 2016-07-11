@@ -388,7 +388,7 @@
       "Properties": {
         "Handler": "index.handler",
         "Role": { "Fn::GetAtt" : ["ZombieLabLambdaRole", "Arn"] },
-        "FunctionName": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "z0mb1es", "GetTalkersToDynamoDB", {"Ref": "AWS::Region"}]]},
+        "FunctionName": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "z0mb1es", "GetTalkersFromDynamoDB", {"Ref": "AWS::Region"}]]},
         "Code": {
           "ZipFile": { "Fn::Join": ["", [
             "console.log('Loading function');\n",
