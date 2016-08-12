@@ -13,6 +13,7 @@ var theS3Bucket;
 var theS3Key
 var theEvent;
 var theContext;
+var RestApiID;
 
 exports.handleGatewayEvent = function(event, context)
 {
@@ -52,9 +53,9 @@ function createApiGatewayCallback(err, restAPIId)
 	}
 	else
 	{
-		var url = "https://" + restAPIId + ".execute-api." + theRegion + 
-		".amazonaws.com/ZombieWorkshopStage/zombie/message";
-		
+		//var url = "https://" + restAPIId + ".execute-api." + theRegion + ".amazonaws.com/ZombieWorkshopStage/zombie/message";
+		var url = "https://" + restAPIId + ".execute-api." + theRegion + ".amazonaws.com/ZombieWorkshopStage";
+		RestApiID = restAPIId; // set global var equal to the rest ID.
 		console.log("calling s3 helper to create constants with url: " + url);
 		
 		zombieconfigupdater.updateConfig(theRegion,
@@ -74,12 +75,16 @@ function finishedUpdatingCallback(err)
 
 	if(err)
 	{
+		console.log('Processing failed during finishedUpdatingCallback.');
 		cloudformationsender.sendResponse(theEvent, 
 	            theContext, "FAILED", {});
 	}
 	else
 	{	
+		console.log('Calling cloudformationsender with SUCCESS param of of RestApiID: ' + RestApiID);
 		cloudformationsender.sendResponse(theEvent, 
-	            theContext, "SUCCESS", {});
+	            theContext, "SUCCESS", {
+	            	"RestApiID": RestApiID
+	            });
 	}
 }

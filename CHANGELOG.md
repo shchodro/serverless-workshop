@@ -2,6 +2,12 @@
 CHANGELOG
 =========
 
+3.0.0
+=====
+* Introduces Cognito User Pools for authentication along with newer looking UI.
+* Adds API Gateway IAM Authorization
+* Provides support for workshop to run in all regions that are currently supporting Lambda and API Gateway services.
+
 2.0.0
 =====
 * Introduces multi-region stack support for workshop to run in any of the 5 existing regions that have API Gateway and Lambda.

@@ -14,25 +14,40 @@
 
   "Mappings": {
     "AllowedRegions": {
-      "us-west-2": { 
-        "S3Endpoint": "https://s3-us-west-2", 
-        "S3ContentsBucket": "aws-zombie-workshop-us-west-2" 
+      "us-west-2": {
+        "S3Endpoint": "https://s3-us-west-2",
+        "S3ContentsBucket": "aws-zombie-workshop-us-west-2",
+        "CognitoRegion": "us-west-2"
       },
-      "us-east-1": { 
-        "S3Endpoint": "https://s3", 
-        "S3ContentsBucket": "aws-zombie-workshop-us-east-1" 
+      "us-east-1": {
+        "S3Endpoint": "https://s3",
+        "S3ContentsBucket": "aws-zombie-workshop-us-east-1",
+        "CognitoRegion": "us-east-1"
       },
       "eu-west-1": {
-        "S3Endpoint": "https://s3-eu-west-1", 
-        "S3ContentsBucket": "aws-zombie-workshop-eu-west-1" 
+        "S3Endpoint": "https://s3-eu-west-1",
+        "S3ContentsBucket": "aws-zombie-workshop-eu-west-1",
+        "CognitoRegion": "eu-west-1"
       },
-      "eu-central-1": { 
-        "S3Endpoint": "https://s3-eu-central-1", 
-        "S3ContentsBucket": "aws-zombie-workshop-eu-central-1" 
+      "eu-central-1": {
+        "S3Endpoint": "https://s3-eu-central-1",
+        "S3ContentsBucket": "aws-zombie-workshop-eu-central-1",
+        "CognitoRegion": "us-east-1"
       },
-      "ap-northeast-1": { 
-        "S3Endpoint": "https://s3-ap-northeast-1", 
-        "S3ContentsBucket": "aws-zombie-workshop-ap-northeast-1"
+      "ap-northeast-1": {
+        "S3Endpoint": "https://s3-ap-northeast-1",
+        "S3ContentsBucket": "aws-zombie-workshop-ap-northeast-1",
+        "CognitoRegion": "ap-northeast-1"
+      },
+      "ap-southeast-1": {
+        "S3Endpoint": "https://s3-ap-southeast-1",
+        "S3ContentsBucket": "aws-zombie-workshop-ap-southeast-1",
+        "CognitoRegion": "us-east-1"
+      },
+      "ap-southeast-2": {
+        "S3Endpoint": "https://s3-ap-southeast-2",
+        "S3ContentsBucket": "aws-zombie-workshop-ap-southeast-2",
+        "CognitoRegion": "us-east-1"
       }
     }
   },
@@ -55,8 +70,8 @@
           "Version": "2012-10-17",
           "Statement": [{
             "Effect": "Allow",
-            "Principal": {"Service": ["lambda.amazonaws.com", "apigateway.amazonaws.com"]},
-            "Action": ["sts:AssumeRole"]
+            "Principal": {"Service": ["lambda.amazonaws.com", "apigateway.amazonaws.com"], "Federated": "cognito-identity.amazonaws.com"},
+            "Action": ["sts:AssumeRole", "sts:AssumeRoleWithWebIdentity"]
           }]
         },
         "Path": "/",
@@ -106,6 +121,16 @@
             },
             {
               "Effect": "Allow",
+              "Action": [
+                "mobileanalytics:PutEvents",
+                "cognito-sync:*",
+                "cognito-identity:*",
+                "cognito-idp:*"
+              ],
+              "Resource": ["*"]
+            },
+            {
+              "Effect": "Allow",
               "Action": ["iam:*"],
               "Resource": ["*"]
             }]
@@ -138,16 +163,39 @@
       "DependsOn": ["ZombieLabLambdaRole","CreateIAMUsers"]
     },
 
+    "APIinvokePolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "Roles": [{ "Ref" : "ZombieLabLambdaRole" }],
+        "PolicyName": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "apiinvokepolicy"]]},
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": ["execute-api:invoke"],
+              "Resource": [
+                { "Fn::Join" : ["", ["arn:aws:execute-api:", { "Ref" : "AWS::Region" }, ":", { "Ref" : "AWS::AccountId" }, ":", { "Fn::GetAtt": ["CreateAPIGateway", "RestApiID"]}, "/ZombieWorkshopStage/zombie/POST/message" ]]},
+                { "Fn::Join" : ["", ["arn:aws:execute-api:", { "Ref" : "AWS::Region" }, ":", { "Ref" : "AWS::AccountId" }, ":", { "Fn::GetAtt": ["CreateAPIGateway", "RestApiID"]}, "/ZombieWorkshopStage/zombie/GET/message" ]]},
+                { "Fn::Join" : ["", ["arn:aws:execute-api:", { "Ref" : "AWS::Region" }, ":", { "Ref" : "AWS::AccountId" }, ":", { "Fn::GetAtt": ["CreateAPIGateway", "RestApiID"]}, "/ZombieWorkshopStage/zombie/POST/talkers" ]]},
+                { "Fn::Join" : ["", ["arn:aws:execute-api:", { "Ref" : "AWS::Region" }, ":", { "Ref" : "AWS::AccountId" }, ":", { "Fn::GetAtt": ["CreateAPIGateway", "RestApiID"]}, "/ZombieWorkshopStage/zombie/GET/talkers" ]]}
+              ]
+            }
+          ]
+        }
+      },
+      "DependsOn": ["ZombieLabLambdaRole", "CreateAPIGateway"]
+    },
+
     "S3BucketPolicy": {
       "Type": "AWS::S3::BucketPolicy",
       "Properties": {
         "Bucket": {"Ref" : "S3BucketForWebsiteContent"},
         "PolicyDocument": {
           "Statement":[{
-          "Action":["s3:GetObject"],
-          "Effect":"Allow",
-          "Resource": { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "S3BucketForWebsiteContent" } , "/*" ]]},
-          "Principal": "*"
+            "Action":["s3:GetObject"],
+            "Effect":"Allow",
+            "Resource": { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "S3BucketForWebsiteContent" } , "/*" ]]},
+            "Principal": "*"
           }]
         }
       }
@@ -203,6 +251,81 @@
       }
     },
 
+    "UsersDynamoDBTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "users"]]},
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "userid",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "phone",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "slackuser",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "slackteamdomain",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "userid",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "phoneindex"]]},
+            "KeySchema": [
+              {
+                "AttributeName": "phone",
+                "KeyType": "HASH"
+              }
+            ],
+            "Projection": {
+              "NonKeyAttributes": ["confirmed", "camp"],
+              "ProjectionType": "INCLUDE"
+            },
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": 5,
+              "WriteCapacityUnits": 5
+            }
+          },
+          {
+            "IndexName": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "slackindex"]]},
+            "KeySchema": [
+              {
+                "AttributeName": "slackuser",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "slackteamdomain",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "NonKeyAttributes": ["confirmed", "camp"],
+              "ProjectionType": "INCLUDE"
+            },
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": 5,
+              "WriteCapacityUnits": 5
+            }
+          }
+        ]
+      }
+    },
+
     "S3BucketForWebsiteContent": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
@@ -248,6 +371,45 @@
       ]
     },
 
+    "CognitoTriggerBuild": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "index.handler",
+        "Role": { "Fn::GetAtt": ["ZombieLabLambdaRole", "Arn"] },
+        "Code": {
+          "S3Bucket": { "Ref" : "S3BucketForWebsiteContent" },
+          "S3Key": "cognitoTriggerBuild.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": "120"
+      },
+      "DependsOn": [
+        "ZombieLabLambdaRole",
+        "S3BucketForWebsiteContent",
+        "PutWebsiteFilesInS3"
+      ]
+    },
+
+    "CreateCognitoTrigger": {
+      "Type": "Custom::CreateCognitoTrigger",
+      "Properties": {
+        "ServiceToken": { "Fn::GetAtt": ["CognitoTriggerBuild", "Arn"] },
+        "region": { "Ref": "AWS::Region" },
+        "CognitoRegion": { "Fn::FindInMap" : [ "AllowedRegions", { "Ref" : "AWS::Region" }, "CognitoRegion"]},
+        "LambdaFunctionBucket": { "Fn::FindInMap" : [ "AllowedRegions", { "Ref" : "AWS::Region" }, "S3ContentsBucket"]},
+        "StackName": { "Ref": "AWS::StackName" },
+        "IamRole": { "Fn::GetAtt": ["ZombieLabLambdaRole", "Arn"] }
+      },
+      "DependsOn": [
+        "S3BucketForWebsiteContent",
+        "ZombieLabLambdaRole",
+        "PutWebsiteFilesInS3",
+        "WriteMessagesToDynamoDB",
+        "GetMessagesFromDynamoDB",
+        "MessagesDynamoDBTable"
+      ]
+    },
+
     "CreateAPIGateway": {
       "Type": "Custom::CreateAPIGateway",
       "Properties": {
@@ -288,6 +450,48 @@
         "ZombieLabLambdaRole",
         "S3BucketForWebsiteContent",
         "PutWebsiteFilesInS3"
+      ]
+    },
+
+    "CognitoPoolsFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "cognito.handler",
+        "Role": { "Fn::GetAtt" : ["ZombieLabLambdaRole", "Arn"] },
+        "Code": {
+          "S3Bucket": { "Ref": "S3BucketForWebsiteContent" },
+          "S3Key": "cognito.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": "300",
+        "MemorySize": "1536"
+      },
+      "DependsOn": [
+        "ZombieLabLambdaRole",
+        "S3BucketForWebsiteContent",
+        "PutWebsiteFilesInS3",
+        "CreateAPIGateway"
+      ]
+    },
+
+    "CreateCognitoPools": {
+      "Type": "Custom::CognitoPoolsFunction",
+      "Properties": {
+        "ServiceToken": { "Fn::GetAtt": ["CognitoPoolsFunction", "Arn"] },
+        "region": { "Ref": "AWS::Region" },
+        "CognitoRegion": { "Fn::FindInMap" : [ "AllowedRegions", { "Ref" : "AWS::Region" }, "CognitoRegion"]},
+        "cognitoRoleARN": { "Fn::GetAtt": ["ZombieLabLambdaRole", "Arn"] },
+        "bucket": { "Ref": "S3BucketForWebsiteContent" },
+        "constantsFile": "S3/assets/js/constants.js",
+        "StackName": { "Ref": "AWS::StackName" }
+      },
+      "DependsOn": [
+        "S3BucketForWebsiteContent",
+        "ZombieLabLambdaRole",
+        "PutWebsiteFilesInS3",
+        "WriteMessagesToDynamoDB",
+        "GetMessagesFromDynamoDB",
+        "MessagesDynamoDBTable"
       ]
     },
 
@@ -369,7 +573,7 @@
             "      context.fail(new Error('DynamoDB Error: ' + err));\n",
             "    } else {\n",
             "      console.log(data);\n",
-            "      context.done(null, {Satus: 'Success'});\n",
+            "      context.done(null, {Status: 'Success'});\n",
             "    }\n",
             "\n",
             "  });\n",
@@ -380,7 +584,7 @@
         "Runtime": "nodejs",
         "Timeout": "10"
       },
-      "DependsOn" : "TalkersDynamoDBTable"
+      "DependsOn" : ["TalkersDynamoDBTable","ZombieLabLambdaRole"]
     },
 
     "GetTalkersFromDynamoDB": {
@@ -440,7 +644,7 @@
         "Runtime": "nodejs",
         "Timeout": "10"
       },
-      "DependsOn" : "TalkersDynamoDBTable"
+      "DependsOn" : ["TalkersDynamoDBTable", "ZombieLabLambdaRole"]
     },
 
     "CreateIAMUsers": {
@@ -492,6 +696,22 @@
       "Value": { "Ref": "MessagesDynamoDBTable" },
       "Description": "Table name of the newly created Messages DynamoDB table that will contain chat messages."
     },
+    "DynamoDBTalkersTableName": {
+      "Value": { "Ref": "TalkersDynamoDBTable" },
+      "Description": "Table name of the newly created Talkers DynamoDB table that will contain metadata about survivors who are typing."
+    },
+    "DynamoDBUsersTableName": {
+      "Value": { "Ref": "UsersDynamoDBTable" },
+      "Description": "Table name of the newly created Users DynamoDB table that will contain records about registered users for the app."
+    },
+    "DynamoDBUsersSlackIndex": {
+      "Value": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "slackindex"]]},
+      "Description": "Name of the Slack index associated with the newly created Users DynamoDB table."
+    },
+    "DynamoDBUsersPhoneIndex": {
+      "Value": { "Fn::Join": ["-", [{"Ref": "AWS::StackName"}, "phoneindex"]]},
+      "Description": "Name of the Phone index associated with the newly created Users DynamoDB table."
+    },
     "Bucket": {
       "Value": { "Ref": "S3BucketForWebsiteContent" },
       "Description": "The S3 bucket which contains the chat web app contents."
@@ -519,6 +739,10 @@
     "DynamoDBGetMessageARN": {
       "Value": { "Fn::GetAtt": ["GetMessagesFromDynamoDB", "Arn"] },
       "Description": "The ARN for the Get Messages Lambda function"
+    },
+    "ApiID": {
+      "Value": { "Fn::GetAtt": ["CreateAPIGateway", "RestApiID"]},
+      "Description": "The unique ID for your API Gateway API."
     },
     "IamUsersPassword": {
       "Value": { "Fn::GetAtt": ["CreateIAMUsers", "IamPassword"]},
@@ -552,7 +776,7 @@
     },
     "BucketCopiedContentsFrom": {
       "Value": { "Fn::FindInMap" : [ "AllowedRegions", { "Ref" : "AWS::Region" }, "S3ContentsBucket"]},
-      "Description": "This is the local region AWS bucket where your files were copied from."  
+      "Description": "This is the local region AWS bucket where your files were copied from."
     }
   }
 }

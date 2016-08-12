@@ -80,8 +80,8 @@ function createRestAPI(callback) {
             restAPIId = data.id;
             return callback(null)
         }
-        else { 
-            callback(err); 
+        else {
+            callback(err);
         }
     });
 }
@@ -96,8 +96,8 @@ function getRootResourse(callback){
             currentResourceId = data.items[0].id;      // successful response
             return callback(null);
         }
-        else { 
-            callback(err); 
+        else {
+            callback(err);
         }
     });
 }
@@ -132,7 +132,7 @@ function createMessagesResource(callback) {
             return callback(null);
         }
         else {
-            callback(err); 
+            callback(err);
         }
     });
 }
@@ -142,7 +142,7 @@ function createMethods(callback) {
     //this method is going to chain the callbacks for the 3 methods to create...
     //we don't need to save the IDs from these calls.
 	var params = {
-        authorizationType: 'None', /* required */
+        authorizationType: 'AWS_IAM', /* required */
         httpMethod: 'GET', /* required */
         resourceId: currentResourceId, /* required */
         restApiId: restAPIId, /* required */
@@ -156,6 +156,7 @@ function createMethods(callback) {
                 if(!err) {
 				    console.log('Creating OPTIONS Method');
 					params.httpMethod = 'OPTIONS';
+                    params.authorizationType = 'None';
 					apigateway.putMethod(params, function(err, data) {
 						if(!err)
 						{
@@ -164,13 +165,13 @@ function createMethods(callback) {
 						else{ callback(err); }
 					});
                 }
-				else { 
+				else {
                     callback(err);
                 }
             });
         }
-		else { 
-            callback(err); 
+		else {
+            callback(err);
         }
     });
 }
@@ -186,7 +187,9 @@ function createMethodResponses(callback) {
             'application/json': 'Empty',
         },
         responseParameters: {
-            'method.response.header.Access-Control-Allow-Origin': true
+			'method.response.header.Access-Control-Allow-Origin': true,
+			'method.response.header.Access-Control-Allow-Headers': true,
+			'method.response.header.Access-Control-Allow-Methods': true
         }
     };
     apigateway.putMethodResponse(params, function(err, data) {
@@ -197,27 +200,29 @@ function createMethodResponses(callback) {
                 if(!err) {
                     console.log('Creating OPTIONS Method Response');
                     params.httpMethod = 'OPTIONS';
+                    /*
                     params.responseParameters = {
                         'method.response.header.Access-Control-Allow-Origin': true,
                         'method.response.header.Access-Control-Allow-Headers': true,
                         'method.response.header.Access-Control-Allow-Methods': true
                     };
+                    */
                     apigateway.putMethodResponse(params, function(err, data) {
                         if(!err) {
                             callback(null);
                         }
-                        else { 
+                        else {
                             callback(err);
                         }
                     });
                 }
-                else { 
-                    callback(err); 
+                else {
+                    callback(err);
                 }
             });
         }
-        else { 
-            callback(err); 
+        else {
+            callback(err);
         }
     });
 }
@@ -240,7 +245,7 @@ function createIntegrations(callback) {
             params.uri = postmessagearn;
             params.requestTemplates = {
             "application/json": '{"message": $input.json(\'$.message\'), "name": $input.json(\'$.name\'), "channel" : $input.json(\'$.channel\') }'
-            } 
+            }
             apigateway.putIntegration(params, function(err, data) {
                 if (!err) {
                     console.log('Creating OPTIONS Integration');
@@ -254,18 +259,18 @@ function createIntegrations(callback) {
                         if (!err) {
                             callback(null);
                         }
-                        else { 
-                            callback(err); 
+                        else {
+                            callback(err);
                         }
                     });
                 }
-                else { 
-                    callback(err); 
+                else {
+                    callback(err);
                 }
             });
         }
-        else { 
-            callback(err); 
+        else {
+            callback(err);
         }
     });
 }
@@ -280,6 +285,7 @@ function createIntegrationResponses(callback) {
         responseParameters: {
 		  'method.response.header.Access-Control-Allow-Origin': "'*'"
         },
+
         responseTemplates : {
             "application/json":'{#set($inputRoot = $input.path("$")) \
             "messages": [ \
@@ -309,7 +315,7 @@ function createIntegrationResponses(callback) {
                     params.httpMethod = 'OPTIONS';
                     params.responseParameters = {
                         'method.response.header.Access-Control-Allow-Origin': "'*'",
-                        'method.response.header.Access-Control-Allow-Headers': "'Content-Type'",
+                        'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
                         'method.response.header.Access-Control-Allow-Methods': "'GET,POST,OPTIONS'"
 				    };
                     params.responseTemplates = {
@@ -319,13 +325,13 @@ function createIntegrationResponses(callback) {
                         if(!err) {
                             callback(null);
                         }
-                        else { 
-                            callback(err); 
+                        else {
+                            callback(err);
                         }
                     });
                 }
                 else {
-                    callback(err); 
+                    callback(err);
                 }
             });
         }
@@ -377,7 +383,7 @@ function createTalkerMethods(callback) {
 	//this method is going to chain the callbacks for the 3 methods to create...
 	//we don't need to save the IDs from these calls.
 	var params = {
-        authorizationType: 'None', /* required */
+        authorizationType: 'AWS_IAM', /* required */
         httpMethod: 'GET', /* required */
         resourceId: talkerResourceId, /* required */
         restApiId: restAPIId, /* required */
@@ -391,6 +397,7 @@ function createTalkerMethods(callback) {
                 if(!err) {
                     console.log('Creating OPTIONS Method');
 					params.httpMethod = 'OPTIONS';
+                    params.authorizationType = 'None';
 					apigateway.putMethod(params, function(err, data) {
                         if(!err) {
                             callback(null);
@@ -405,7 +412,7 @@ function createTalkerMethods(callback) {
                 }
             });
         }
-        else { 
+        else {
             callback(err);
         }
     });
@@ -413,10 +420,12 @@ function createTalkerMethods(callback) {
 
 function done(err, status) {
     if(err) {
-	   theDoneCallback(err, null);
+        console.log('There was an error with APIGW Create waterfall callback.');
+        theDoneCallback(err, null);
 	}
 	else {
-	   theDoneCallback(null, restAPIId);
+        console.log('Callback with rest ID of: ' + restAPIId);
+        theDoneCallback(null, restAPIId);
 	}
 }
 
@@ -461,7 +470,7 @@ function createTalkerIntegrations(callback) {
                 }
 			});
         }
-        else { 
+        else {
             callback(err);
         }
     });
@@ -496,13 +505,13 @@ function createTwilioMethods(callback) {
     };
 	apigateway.putMethod(params, function(err, data) {
         if(!err) {
-            console.log('Created Twilio POST Method');     
+            console.log('Created Twilio POST Method');
             return callback(null);
         }
         else {
-            callback(err); 
+            callback(err);
         }
-    });        
+    });
 }
 
 function createTwilioMethodResponses(callback) {
@@ -539,7 +548,7 @@ function createTwilioIntegrations(callback) {
         uri: null,
         requestTemplates: {
             "application/x-www-form-urlencoded": '{"postBody" : "$input.path(\'$\')"}'
-        }       
+        }
     };
     apigateway.putIntegration(params, function(err, data) {
         if (!err) {

@@ -1,0 +1,7 @@
+<div class="panel-body">
+    <div id="chat-body">
+        <div id="message-items" data-ng-repeat="message in messages">
+            {{ message.name }} {{message.timestamp | date:'yyyy-MM-dd HH:mm:ss Z'}} - {{message.message}}<br/>
+        </div>
+    </div>
+</div>

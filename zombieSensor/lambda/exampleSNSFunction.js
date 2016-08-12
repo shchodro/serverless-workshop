@@ -1,60 +1,71 @@
-var https = require('https');
+/* == Imports == */
+var querystring = require('querystring');
+var AWS = require('aws-sdk');
+var path = require('path');
 
-/**
- * Pass the data to send as `event.data`, and the request options as
- * `event.options`. For more information see the HTTPS module documentation
- * at https://nodejs.org/api/https.html.
- *
- * Will succeed with the response body.
- */
+/* == Globals == */
+var API = {
+    region: 'INSERT YOUR REGION CODE HERE', //i.e 'us-east-1'
+    endpoint: 'INSERT YOUR API GATEWAY URL HERE INCLUDING THE HTTPS://'
+};
+
+var endpoint = new AWS.Endpoint(API.endpoint);
+var creds = new AWS.EnvironmentCredentials('AWS');
+
 exports.handler = function(event, context) {
+    
+    var params = querystring.parse(event.postBody);
+    var from = params.From;
+    var timestamp = "" + new Date().getTime();
+    var numMedia = params.NumMedia;
+    var message;
+    var mediaURL;
+    var phoneAuthorized = false; //will set to true when incoming phone is validated
+
     //console.log('Received event:', JSON.stringify(event, null, 2));
     var snsData = JSON.parse(event.Records[0].Sns.Message);
     console.log('From SNS:', snsData);
     
     var message = snsData.message;
 
-    var post_data = JSON.stringify(
-        {
+    var post_data = JSON.stringify({
             "message": message, 
             "name": "SYSTEM ALERT", 
             "channel": "default"
             
-        });
-
-    // Object of options to designate where to send our request
-    var post_options = {
-        host: 'INSERT YOUR API GATEWAY URL HERE',
-        port: '443',
-        path: '/ZombieWorkshopStage/zombie/message',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': post_data.length
-        }
-    };
-    
-    var req = https.request(post_options, function(res) {
-        var body = '';
-        console.log('Status:', res.statusCode);
-        console.log('Headers:', JSON.stringify(res.headers));
-        res.setEncoding('utf8');
-        res.on('data', function(chunk) {
-            body += chunk;
-        });
-
-        res.on('end', function() {
-            console.log('Successfully processed HTTPS response');
-            // If we know it's JSON, parse it
-            if (res.headers['content-type'] === 'application/json') {
-                body = JSON.parse(body);
-            }
-            context.succeed(body);
-        });
-        
     });
-    req.on('error', context.fail);
-    req.write(post_data);
-    req.end();
-};
 
+    postToChatService(post_data, context);    
+    
+}
+
+function postToChatService(post_data, context) {
+    var req = new AWS.HttpRequest(endpoint);
+
+    req.method = 'POST';
+    req.path = '/ZombieWorkshopStage/zombie/message';
+    req.port = '443';
+    req.region = API.region;
+    req.headers['presigned-expires'] = false;
+    req.headers['Host'] = endpoint.host;
+    req.body = post_data;
+    
+    console.log('host is ' + endpoint.host);
+    var signer = new AWS.Signers.V4(req,'execute-api');  // es: service code
+    signer.addAuthorization(creds, new Date());
+
+    var send = new AWS.NodeHttpClient();
+    send.handleRequest(req, null, function(httpResp) {
+        var respBody = '';
+        httpResp.on('data', function (chunk) {
+            respBody += chunk;
+        });
+        httpResp.on('end', function (chunk) {
+            console.log('Successfully processed HTTPS response');
+            context.succeed('Alert delivered: ' + JSON.parse(post_data).message);
+        });
+    }, function(err) {
+        console.log('Error: ' + err);
+        context.fail('Lambda failed with error ' + err);
+    });
+}
