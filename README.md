@@ -196,6 +196,8 @@ Download the **S3/assets/js.constants.js** file to your local machine and open i
 
 21\. Navigate back to CloudFormation and find the Chat Room URL (MyChatRoomURL) in the Outputs tab of your CloudFormation stack. Click it to open the chat application in a new browser window.
 
+* If you already had the application opened in your browser, please refresh the page so that the new constants.js loads with the app.
+
 22\. You should see a sign in page for the Zombie survivor web app. You need to create an account so click **Sign Up**.
 
 23\. Fill out the form.
