@@ -74,13 +74,15 @@ Please continue to the next section for the required Cognito User Pools authenti
 
 ## Setup Authentication with Cognito User Pools (Required)
 
-The survivor chat uses [Amazon Cognito](https://aws.amazon.com/cognito/) for authentication. Cognito Identity enables you to authenticate users through an external identity provider and provides temporary security credentials to access your app’s backend resources in AWS or any service behind Amazon API Gateway. Amazon Cognito works with external identity providers that support SAML or OpenID Connect, social identity providers (such as Facebook, Twitter, Amazon) and you can also integrate your own identity provider.
+The survivor chat uses [Amazon Cognito](https://aws.amazon.com/cognito/) for authentication. Cognito Federated Identity enables you to authenticate users through an external identity provider and provides temporary security credentials to access your app’s backend resources in AWS or any service behind Amazon API Gateway. Amazon Cognito works with external identity providers that support SAML or OpenID Connect, social identity providers (such as Facebook, Twitter, Amazon) and you can also integrate your own identity provider.
 
-In addition to federating 3rd party providers such as Facebook, Google, and other providers, Cognito also offers a built-in Identity Provider called [Cognito User Pools](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools.html).
+In addition to federating 3rd party providers such as Facebook, Google, and other providers, Cognito also offers a new built-in Identity Provider called [Cognito User Pools](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools.html).
 
-A Cognito Identity has already been created for you when you launched CloudFormation. Additionally, the API Gateway endpoints created for you when you launched the stack are configured with IAM authorization. When users authenticate to your app in Cognito, the app client will sign all HTTPS requests with an [AWS SigV4 signature](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) from the role your users assume in their login session.
+A Cognito Federated Identity pool has already been created for you when you launched CloudFormation. 
 
-You will now setup a Cognito User Pool to hold the identities of your chat app survivors and configure it for federation to Cognito Identity. API Gateway has been configured to only allow requests that are signed with valid AWS permissions. When a user signs into the Survivor Chat App, they will assume an authenticated role from Cognito that allows them to make signed API requests to API Gateway to send and receive chat messages.
+You will now setup the Cognito User Pool as the user directory of your chat app survivors and configure it as a valid Authentication Provider with the Cognito Federated Identity Pool. API Gateway has been configured with IAM Authorization to only allow requests that are signed with valid AWS permissions. When a user signs into the Survivor Chat App (User Pool) successfully, a web call is made to the Cognito Federated Identity Pool to assume temporary AWS credentials for your authenticated user. These credentials are used to make signed [AWS SigV4](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) HTTPS requests to your message API.
+
+![Overview of Cognito Authentication](/Images/CognitoOverview.png)
 
 **Let's get started...**
 
