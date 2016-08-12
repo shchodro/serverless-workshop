@@ -18,7 +18,7 @@ angular.module('chatApp.chat', ['chatApp.utils'])
     if (cognitoUser != null) {
         cognitoUser.getSession(function(err, session) {
             if (err) {
-                $state.go('signin', { });
+                $scope.signout(); 
                 return;
             }
             console.log('session validity: ' + session.isValid());
