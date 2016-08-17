@@ -401,7 +401,7 @@ In the text editor, delete all the code already in there and copy the following 
     <Message>
         <Body>
             $inputRoot
-        </Body
+        </Body>
     </Message>
 </Response>
 ```
