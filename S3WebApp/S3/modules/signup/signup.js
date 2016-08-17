@@ -46,17 +46,17 @@ angular.module('chatApp.signup', ['chatApp.utils'])
 
             var dataCamp = {
                 Name : 'custom:camp',
-                Value : $scope.user.camp
+                Value : $scope.user.camp ? $scope.user.camp : "null"
             };
 
             var dataSlackuser = {
                 Name : 'custom:slackuser',
-                Value : $scope.user.slackuser
+                Value : $scope.user.slackuser ? $scope.user.slackuser : "null"
             };
 
             var dataSlackteamdomain = {
                 Name : 'custom:slackteamdomain',
-                Value : $scope.user.slackteamdomain
+                Value : $scope.user.slackteamdomain ? $scope.user.slackteamdomain : "null"
             };
 
             var attributeEmail = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute(dataEmail);
