@@ -362,7 +362,7 @@ Finally you will also copy in the name of your DynamoDB Users table that was cre
 
 14\. After you have copied the code into the Lambda inline code console and modified the variables, scroll down to the **Lambda function handler and role** section. **Choose an existing role** should be selected from the dropdown. Then for the existing **role**, select the role that looks like **[Your stack name]-ZombieLabLambdaRole...**. For simplicity we are reusing the same Lambda role for our functions.
 
-15\. Set the **timeout** field to 30 seconds and peep all the rest of the defaults set. Then lick **Next** and then **Create function** on the Review page to create your Lambda function.
+15\. Set the **timeout** field to 30 seconds and keep all the rest of the defaults set. Then click **Next** and then **Create function** on the Review page to create your Lambda function.
 
 * You have just created a Lambda function that accepts the querystring params from the incoming API Gateway /twilio endpoint, converts the parameters to the correct format for our Chat Service including a conversion to JSON format, and finally makes an HTTPS POST request to the /zombie/message Chat Service endpoint. That endpoint will take care of inserting the data into the DynamoDB messages table.
 
