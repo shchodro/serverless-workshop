@@ -10,7 +10,7 @@ angular.module('chatApp.confirm', [])
 
     $scope.confirmAccount = function(isValid) {
         console.log($scope.user);
-        var _username = $scope.user.email.replace("@", "_").replace(".", "_");
+        var _username = $scope.user.email;
         if (isValid) {
             console.log("Confirmation code " + $scope.user.confirmCode);
 
@@ -29,7 +29,8 @@ angular.module('chatApp.confirm', [])
             cognitoUser.confirmRegistration($scope.user.confirmCode, true, function(err, result) {
                 if (err) {
                     console.log(err);
-                    $scope.errormessage = "An unexpected error has occurred. Please try again.";
+                    $scope.errormessage = "An unexpected error has occurred. Please try again. Error: " + err;
+                    $scope.$apply();
                     return;
                 }
                 console.log('call result: ' + result);

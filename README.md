@@ -94,9 +94,7 @@ When inside the Cognito service console, click the blue button **Manage your Use
 
 4\. On the attributes page, select the required checkbox for the following attributes: **email, name, phone number**.
 
-* Cognito User Pools allows you to define attributes that you'd like to associate with users of your application. These represent values that your users will provide when they sign up for your app. They are available to your application as a part of the session data provided to your client apps when users authenticate with Cognito. Cognito User Pools also allows you to specify "alias" attributes, which means that they can be used as an alternative method of logging into the application instead of username. Therefore, alias attributes must be unique within your User Pool.
-
-Select the "alias" checkbox for the **email** attribute. The email attribute will be unique for our environment and we'll make it available as an alias for users to login with.
+* Cognito User Pools allows you to define attributes that you'd like to associate with users of your application. These represent values that your users will provide when they sign up for your app. They are available to your application as a part of the session data provided to your client apps when users authenticate with Cognito. 
 
 5\. Click the link "Add custom attribute". Leave all the defaults and type a "Name" of **slackuser** exactly as typed here. Add 2 additional custom attributes, **slackteamdomain** and **camp**.
 

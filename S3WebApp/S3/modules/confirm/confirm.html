@@ -13,6 +13,11 @@
                         <p class="text-muted">Confirm your Zombie Apocalypse chat account.</p>
                     </div>
                 </div>
+                <div class="form-group" ng-show="errormessage">
+                    <div class="col-xs-12 has-error">
+                        <p class="help-block">{{errormessage}}</p>
+                    </div>
+                </div>
                 <div class="form-group " ng-class="{ 'has-error': confirmForm.email.$touched && confirmForm.email.$invalid }">
                     <div class="col-xs-12">
                         <input name="email" class="form-control" ng-model="user.email" required placeholder="Email" type="email">

@@ -16,7 +16,7 @@ angular.module('chatApp.signup', ['chatApp.utils'])
 
     $scope.register = function(isValid) {
         console.log($scope.user);
-        var _username = $scope.user.email.replace("@", "_").replace(".", "_");
+        var _username = $scope.user.email;
         console.log(_username);
         if (isValid) {
             console.log("Submitted " + $scope.user.name);
@@ -76,12 +76,15 @@ angular.module('chatApp.signup', ['chatApp.utils'])
             userPool.signUp(_username, $scope.user.password, attributeList, null, function(err, result){
                 if (err) {
                     console.log(err);
-                    $scope.errormessage = "An unexpected error has occurred. Please try again.";
+                    $scope.errormessage = "An unexpected error has occurred. Please try again. Error: " + err;
+                    $scope.$apply();
                     return;
+                    
+                } else {
+                    cognitoUser = result.user;
+                    console.log('user name is ' + cognitoUser.getUsername());
+                    $state.go('confirm', { });
                 }
-                cognitoUser = result.user;
-                console.log('user name is ' + cognitoUser.getUsername());
-                $state.go('confirm', { });
             });
 
         } else {
