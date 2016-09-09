@@ -14,8 +14,6 @@ var API = {
 var table = "YOUR DYNAMODB USERS TABLE"; //INSERT THE NAME OF YOUR DYNAMODB USERS TABLE
 var index = "YOUR phoneindex DYNAMODB INDEX NAME"; //INSERT THE NAME OF YOUR phoneindex from DynamoDB.
 
-
-
 var endpoint = new AWS.Endpoint(API.endpoint);
 var creds = new AWS.EnvironmentCredentials('AWS');
 var docClient = new AWS.DynamoDB.DocumentClient({
@@ -30,7 +28,6 @@ exports.handler = function(event, context) {
     var numMedia = params.NumMedia;
     var message;
     var mediaURL;
-    var phoneAuthorized = false; //will set to true when incoming phone is validated
     
     /* == DynamoDB Params == */
     var ddbParams = {
@@ -94,17 +91,10 @@ exports.handler = function(event, context) {
                 data.Items.forEach(function(item) {
                     console.log('Incoming message from: ' + item.phone);
                 });
-                phoneAuthorized = true;
+                postToChatService(post_data, context);  
             }
         }
-    });
-    
-    if (phoneAuthorized = true) {
-        postToChatService(post_data, context);    
-    } else {
-        context.done('Your phone number is not authorized to send texts to survivors. There were no phone numbers matching yours. Please sign up first.');
-    }
-    
+    });    
 }
 
 function postToChatService(post_data, context) {
