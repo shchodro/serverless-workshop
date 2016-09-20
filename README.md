@@ -65,7 +65,7 @@ Region | Launch Template
 
 4\. On the "Options" page, leave the defaults and click **Next**.
 
-5\. On the "Review" page, verify your selections, then scroll to the bottom and acknowledge that your Stack will launch IAM resources for you. Then click **Create** to launch your stack.
+5\. On the "Review" page, verify your selections, then scroll to the bottom and select the checkbox **I acknowledge that AWS CloudFormation might create IAM resources**. Then click **Create** to launch your stack.
 
 6\. Your stack will take about 3 minutes to launch and you can track its progress in the "Events" tab. When it is done creating, the status will change to "CREATE_COMPLETE".
 
@@ -327,13 +327,13 @@ In this section, you’ll create a free-trial Twilio SMS phone number. You will 
 2\. Once you have created your account, login to the Twilio console and navigate to the Home icon on the left navigation pane. On the Home screen/console dashboard, scroll down to the **Phone Numbers** section and click "Phone Numbers".
 ![Manage Twilio Phone Number](/Images/Twilio-Step2.png)
 
-3\. On the Phone Numbers screen, click "Get Started" to assign a phone number to your account. Then click the red "Get your first Twilio phone number" button. We’re going to generate a 10-digit phone number in this lab, but a short-code would also work if preferred. This number should be enabled for voice and messaging by default. A popup will appear with your new phone number, click "Choose this number".
+3\. On the Phone Numbers screen, click "Get Started" to assign a phone number to your account. Then click the red "Get your first Twilio phone number" button. We’re going to generate a 10-digit phone number in this lab, but a short-code would also work if preferred. This number should be enabled for voice and messaging by default. A popup will appear with your new phone number, if the proposed phone number supports messaging, click "Choose this number" and go to the next step. If the proposed phone number does not support messaging, click "Search for a different number", select your country and select the checkbox "SMS", then click "Search". Twilio propose a list of phone number, select "Choose number" for one of them. Then, type your address, click "Save and continue" and "Done".
 
 *These are US phone numbers. You can provision an international phone number if doing this workshop outside the U.S. Twilio terms and conditions and pricing applies. Please see their website for those details.*
 
 4\. Once you’ve received a phone number, click the **Manage Numbers** button on the left navigation pane. Click on your phone number, which will take you to the properties page for that number.
 
-5\. Scroll to the bottom of the properties page, to the messaging section. In the **Configure With** dropdown, select the **Webhooks/TwiML** option. Leave this page open for now and proceed to the next step.
+5\. Scroll to the bottom of the properties page, to the **Messaging** section. In the **Configure With** dropdown, select the **Webhooks/TwiML** option. Leave this page open for now and proceed to the next step.
 
 * The Twilio webhooks section allows you to integrate your phone number with third party services. In this case, you're going to configure your Twilio phone number to forward any messages sent to that number to your API Gateway endpoint with POST HTTP requests.
 
@@ -461,79 +461,23 @@ In this lab you'll launch an Elasticsearch Service cluster and setup DynamoDB St
 
 11\. Skip the Blueprint section by selecting the Skip button in the bottom right.
 
-12\. Give your function a name, such as **"[Your CloudFormation stack name]-ESsearch"**. Keep the runtime as Node.js 4.3. You can set a description for the function if you'd like.
+12\. In Configure Triggers section, select the DynamoDB event source type and then select the **messages** DynamoDB table. It should appear as **"[Your CloudFormation stack name]-messages"**. Then set the **Batch size** to **5**, the **Starting position** to **Lastest** and select the checkbox **Enable trigger**. Then click on Next button.
 
-13\. Paste in the code from the ZombieWorkshopSearchIndexing.js file provided to you. This is found in the Github repo in the "ElasticsearchLambda" folder.
+13\. Give your function a name, such as **"[Your CloudFormation stack name]-ESsearch"**. Keep the runtime as Node.js 4.3. You can set a description for the function if you'd like.
 
-14\. On [line 6](/ElasticsearchLambda/ZombieWorkshopSearchIndexing.js#L6) in the code provided, replace **region** with the region code you are working in (the region you launched your stack, created your Lambda function etc).
+14\. Paste in the code from the ZombieWorkshopSearchIndexing.js file provided to you. This is found in the Github repo in the "ElasticsearchLambda" folder.
+
+15\. On [line 6](/ElasticsearchLambda/ZombieWorkshopSearchIndexing.js#L6) in the code provided, replace **region** with the region code you are working in (the region you launched your stack, created your Lambda function etc).
 
 Then on line 7, replace the **endpoint** variable that has a value of **ENDPOINT_HERE** with the Elasticsearch endpoint created in step 8\. **Make sure the endpoint you paste starts with https://**.
 
 * This step requires that your cluster is finished creating and in "Active" state before you'll have access to see the endpoint of your cluster.
 
-15\. Now you'll add an IAM role to your Lambda function. For the Role (you may need to navigate to the Configuration tab in Lambda to see this), create a new DynamoDB event stream role by clicking **DynamoDB event stream role** in the role dropdown. This will open a new page confirming that you want to create a role, just click **Allow** to proceed.
+16\. Now you'll add an IAM role to your Lambda function. For the Role, select **Create new Role from template(s)**, give a name to your Role like **"[Your CloudFormation stack name]-ZombieLabLambdaDynamoESRole"** and select the Role template **Elasticsearch permissions**.
 
-16\. In the "Timeout" field for your Lambda function (you may need to visit the Configuration tab and Advanced Settings to see this), change the function timeout to **1** minute. This ensures Lambda can process the batch of messages before Lambda times out. Keep all the other defaults on the page set as is. Select **Next** and then on the Review page, select **Create function** to create your Lambda function.
+17\. In the "Timeout" field for your Lambda function, change the function timeout to **1** minute. This ensures Lambda can process the batch of messages before Lambda times out. Keep all the other defaults on the page set as is. Select **Next** and then on the Review page, select **Create function** to create your Lambda function.
 
-17\. Select the "Event Sources" tab for the new **"[Your CloudFormation stack name]-ESsearch"** function that you created.
-
-18\. Select **Add event source**.
-
-19\. Select the DynamoDB Event source type and then select the **messages** DynamoDB table. It should appear as **"[Your CloudFormation stack name]-messages"** You can leave the rest as the defaults.
-
-20\. After creation, you should see an event source that is similar to the screenshot below:  
-![API Gateway Invoke URL](/Images/Search-Step20.png)
-
-21\. In the above step, we configured [DynamoDB Streams](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html) to capture incoming messages on the table and trigger a Lambda function to push them to our Elasticsearch cluster.
-
-22\. The "lambda_dynamo_streams" role that you selected for your Lambda function earlier does not currently have permissions to write to your Elasticsearch cluster. We will configure that now.
-
-23\. Navigate to [Identity and Access Management](https://console.aws.amazon.com/iam/) in the AWS Management Console. The icon for this service is green and is listed under the "Security & Identity" section.
-
-24\. In the Identity and Access Management console, select the link for **Roles**.
-
-* [IAM Roles](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html), similar to users, have permissions that you associate with them, which allows you to define what access can be granted to various entities. Roles can be assumed by EC2 Instances, Lambda Functions, and other applications and services.
-
-25\. In the "Filter" textbox on the Roles screen, type in **lambda_dynamo_streams** and click on the role. This is the role you assigned to your Lambda function earlier.
-
-26\. Scroll to the "Inline Policies" section where you will find a policy similar to "oneClick_lambda_dynamo_streams_xxxxxxxxxx". Click **Edit Policy** to edit the policy. Delete all the contents of the Inline Policy, and replace it with the policy block below:
-
-```
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "lambda:InvokeFunction"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "dynamodb:GetRecords",
-                "dynamodb:GetShardIterator",
-                "dynamodb:DescribeStream",
-                "dynamodb:ListStreams",
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents",
-                "es:*"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-```
-
-27\. Click the **Validate Policy** button and ensure that AWS returns a successful message "The Policy is valid". Then select **Apply Policy** to save it.
-
-* This new policy you have copied over includes a new Allow action, ```es:*``` which allows the role all actions on the Amazon Elasticsearch Service. In production it is recommended that you specify the actual ARN of the cluster you created instead of just any ES cluster, so that Lambda can only interact with that specific ES domain.
-
-28\. Now with the IAM permissions in place, your messages posted in the chat from this point forward will be indexed to Elasticsearch. Post a few messages in the chat. You should be able to see that messages are being indexed in the "Indices" section for your cluster in the Elasticsearch Service console.
+18\. In the above step, we configured [DynamoDB Streams](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html) to capture incoming messages on the table and trigger a Lambda function to push them to our Elasticsearch cluster. Your messages posted in the chat from this point forward will be indexed to Elasticsearch. Post a few messages in the chat, at least 5 as configured in the DynamoDB Streams event source (batch size). You should be able to see that messages are being indexed in the "Indices" section for your cluster in the Elasticsearch Service console.
 ![API Gateway Invoke URL](/Images/Search-Done.png)
 
 **LAB 3 COMPLETE**
