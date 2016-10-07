@@ -127,7 +127,7 @@ Click **Next step**.
 
 9\. On the Apps page, click **Add an app**. In the **App Name** textbox, type "Zombie Survivor Chat App" and **deselect the client secret checkbox**. Click **Set attribute read and write permissions**. You need to give the app "writable" access to the custom attributes you created. Select the **Writable Attributes** checkboxes for the attributes **custom:slackuser, custom:slackteamdomain, and custom:camp** Leave the rest of the defaults and click **Create App**, then click **Next step**.
 
-10\. In the dropdowns for the **Pre authentication** and **Post confirmation** triggers, select the Lambda function named "[Your CloudFormation Stack name]-CognitoLambdaTrigger". Click **Next step**.
+10\. In the dropdowns for the **Pre authentication** and **Post confirmation** triggers, select the Lambda function named "[Your CloudFormation Stack name]-CognitoLambdaTrigger-[Your Region]". Click **Next step**.
 
 * Cognito User Pools allows developers to inject custom workflow logic into the signup and signin process. This custom workflow logic is represented with AWS Lambda functions known as Lambda Triggers.
 
