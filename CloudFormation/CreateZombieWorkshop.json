@@ -24,6 +24,12 @@
         "S3ContentsBucket": "aws-zombie-workshop-us-east-1",
         "CognitoRegion": "us-east-1"
       },
+      "us-east-2": {
+        "S3Endpoint": "https://s3-us-east-2",
+        "S3ContentsBucket": "aws-zombie-workshop-us-east-2",
+        "CognitoRegion": "us-east-1"
+      },
+
       "eu-west-1": {
         "S3Endpoint": "https://s3-eu-west-1",
         "S3ContentsBucket": "aws-zombie-workshop-eu-west-1",
@@ -367,7 +373,7 @@
           "S3Bucket": { "Fn::FindInMap" : [ "AllowedRegions", { "Ref" : "AWS::Region" }, "S3ContentsBucket"]},
           "S3Key": "S3GetFilesFunction.zip"
         },
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "120"
       },
       "DependsOn": [
@@ -446,7 +452,7 @@
           "S3Bucket": { "Ref": "S3BucketForWebsiteContent" },
           "S3Key": "WK305_Gateway.zip"
         },
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "300",
         "MemorySize": "1536"
       },
@@ -510,7 +516,7 @@
           "S3Bucket": { "Ref" : "S3BucketForWebsiteContent" },
           "S3Key": "ZombiePostMessage.zip"
         },
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "60"
       },
       "DependsOn": [
@@ -530,7 +536,7 @@
           "S3Bucket": { "Ref" : "S3BucketForWebsiteContent" },
           "S3Key": "ZombieGetMessages.zip"
         },
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "60"
       },
       "DependsOn" : [
@@ -586,7 +592,7 @@
             "};\n"
             ]]}
         },
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "10"
       },
       "DependsOn" : ["TalkersDynamoDBTable","ZombieLabLambdaRole"]
@@ -646,7 +652,7 @@
             "};\n"
             ]]}
         },
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "10"
       },
       "DependsOn" : ["TalkersDynamoDBTable", "ZombieLabLambdaRole"]
@@ -676,7 +682,7 @@
           "S3Bucket": { "Ref" : "S3BucketForWebsiteContent" },
           "S3Key": "IamUsers.zip"
         },
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "60"
       },
       "DependsOn": [
