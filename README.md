@@ -91,7 +91,7 @@ You will now setup the Cognito User Pool as the user directory of your chat app 
 
 ![Navigate to the Cognito service](/Images/Cognito-Step1.png)
 
-Cognito User Pools is not available in all AWS regions. Therefore if you launched your CloudFormation stack in any region other than **us-east-1 (Virginia), us-west-2 (Oregon), eu-west-1 (Ireland), or ap-northeast-1 (Tokyo)**, then please use the top navigation bar in the management console to switch AWS regions and navigate to **us-east-1 (Virginia)** to configure Cognito. Your application will stay hosted in the region you launched the CloudFormation template, but the authentication with Cognito will reside in us-east-1. If you launched the Cloudformation stack in one of those regions listed above, then please simply navigate to the Cognito service in the management console as the service is available in that region already.
+Cognito User Pools is not available in all AWS regions. Please review the list [here](https://docs.aws.amazon.com/general/latest/gr/rande.html#cognito_identity_region) for the regions that Cognito is available in. Therefore if you launched your CloudFormation stack in any region other than one of those listed on the above website, then please use the top navigation bar in the management console to switch AWS regions and navigate to **us-east-1 (Virginia)** to configure Cognito. Your application will stay hosted in the region you launched the CloudFormation template, but the authentication with Cognito will reside in us-east-1 (Virginia). If you launched the Cloudformation stack in one of those regions where Cognito exists, then please simply navigate to the Cognito service in the AWS Management Console as the service is available in that region already and you will configure it within that region.
 
 When inside the Cognito service console, click the blue button **Manage your User Pools**. You will setup the user directory that your chat application users will authenticate to when they use your app.
 
@@ -115,17 +115,15 @@ Click **Next Step**.
 
 6\. On the Policies page, leave the Password policy settings as default and click **Next step**.
 
-7\. On the verifications page, leave the defaults for the first two sections and scroll down to the section titled **Do you want to customize your email verification message?**
-
-Add a custom email subject such as "Signal Corps Survivor Confirmation". We won't modify the message body but you could add your own custom message in there. We'll let Cogntio send the emails from the service email address, but in production you could configure Cognito to send these verifications from an email server you own.
-
-Click **Next step**.
+7\. On the verifications page, leave the defaults and click **Next step**. 
 
 * We will not require MFA for this application. However, for during sign up we are requiring verification via email address. This is denoted with the email checkbox selected for "Do you want to require verification of emails or phone numbers?". With this setting, when users sign up for the application, a confirmation code will be sent to their email which they'll be required to input into the application for confirmation.
 
-8\. On the Devices page, leave the default option of "No" selected. We will not configure the User Pool to remember user's devices.
+8\. On the "Message Customizations" page, in the section titled **Do you want to customize your email verification message?** add a custom email subject such as "Signal Corps Survivor Confirmation". We won't modify the message body but you could add your own custom message in there. We'll let Cognito send the emails from the service email address, but in production you could configure Cognito to send these verifications from an email server you own. Leave the rest of the default settings and click **Next step**. 
 
-9\. On the Apps page, click **Add an app**. In the **App Name** textbox, type "Zombie Survivor Chat App" and **deselect the client secret checkbox**. Click **Set attribute read and write permissions**. You need to give the app "writable" access to the custom attributes you created. Select the **Writable Attributes** checkboxes for the attributes **custom:slackuser, custom:slackteamdomain, and custom:camp** Leave the rest of the defaults and click **Create App**, then click **Next step**.
+On the Devices page, leave the default option of "No" selected. We will not configure the User Pool to remember user's devices.
+
+9\. On the Apps page, click **Add an app**. In the **App Name** textbox, type "Zombie Survivor Chat App" and **deselect the client secret checkbox**. Click **Set attribute read and write permissions**. You need to make sure that the app has "writable" and "readable" access to the attributes you created. Make sure that **all of the checkboxes are selected** for "Readable Attributes" and "Writable Attributes". Then click **Create app**, and then click **Next step**.
 
 10\. In the dropdowns for the **Pre authentication** and **Post confirmation** triggers, select the Lambda function named "[Your CloudFormation Stack name]-CognitoLambdaTrigger-[Your Region]". Click **Next step**.
 
@@ -141,7 +139,7 @@ Click **Next step**.
 
     * For this workshop we use the same backend Lambda function for both of the triggers. On invocation, the function checks what type of even has occurred, Post-Confirmation or Pre-Authentication, and executes the correct code accordingly.
 
-11\. Review the settings for your User Pool and click **Create pool**. If your pool created successfully you should be returned to the Pool Details page.
+11\. Review the settings for your User Pool and click **Create pool**. If your pool created successfully you should be returned to the Pool Details page and it will display a green box that says "Your user pool was created successfully".
 
 12\. Open a text editor on your computer and copy into it the "Pool Id" displayed on the Pool details page. Then click into the **Apps** tab found on the left side navigation pane. You should see an **App client id** displayed. Copy that **App client id** into your text editor as well.
 
@@ -187,7 +185,7 @@ Download the **S3/assets/js.constants.js** file to your local machine and open i
 
 19\. Open up the constants.js file and copy over the User Pool ID into the "USER_POOL_ID" variable. Then copy the App Client ID into the "CLIENT_ID" variable. These should be copied from the open text file you had open from earlier.
 
-* The JS application uses the values in this file to determine the runtime variables necessary to communicate with the different services of the workshop.
+* Your serverless javascript zombie application uses the values in this file at runtime to communicate with the different services of the workshop.
 
 * The Identity Pool Id was automatically filled in with several other variables when the CloudFormation template was launched.
 
@@ -201,7 +199,7 @@ Download the **S3/assets/js.constants.js** file to your local machine and open i
 
 22\. You should see a sign in page for the Zombie survivor web app. You need to create an account so click **Sign Up**.
 
-23\. Fill out the form.
+23\. Fill out the form to sign up as a survivor.
 
 * **Select your Camp**: Specify the geography where you live! Currently this attribute is not used in the application and is available for those that want to tackle an extra credit opportunity!. When you're done with the workshop, try and tackle the Channel Challenge in the Appendix.
 
@@ -270,7 +268,7 @@ The application uses [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.
 11\. Go to the /zombie/talkers/POST method by clicking the "POST" option in the resource tree on the left navigation pane.
 ![POST Method](/Images/Typing-Step11.png)
 
-12\. Perform Steps 4-10 again as you did for the GET method. However, this time when you are selecting the Lambda Function for the Integration Request, you'll type "writetalkers" in the auto-fill and select the function that looks something like this... **[CloudformationTemplateName]-[XXXXXXX]-GetTalkersFromDynamoDB-[Your Region]**
+12\. Perform Steps 4-10 again as you did for the GET method. However, this time when you are selecting the Lambda Function for the Integration Request, you'll type "writetalkers" in the auto-fill and select the function that looks something like this... **[CloudformationTemplateName]-[XXXXXXX]-GetTalkersFromDynamoDB-[Your Region]**. Don't forget to return to the Method Response section for this POST method and add a "200" HTTP response status as you did for the GET method earlier, if it doesn't exist already.
 
 * In these steps you are configuring the POST method that is used by the chat app to insert data into DynamoDB Talkers table with details about which users are typing. You're performing the same exact method configuration for the POST method as you did for your GET method. However, since this POST method is used for sending data to the database, it triggers a different backend Lambda function. This function writes data to DynamoDB while the "GetTalkersToDynamoDB" function was used to retrieve data from DynamoDB.
 
@@ -303,11 +301,11 @@ The application uses [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.
 
 23\. Select the ZombieWorkshopStage deployment and hit the Deploy button.
 
-* In this workshop we deploy the API to a stage called "ZombieWorkshopStage". In your real world scenario, you'll likely deploy to stages such as "production" or "development" which align to the actual stages of your API development process.
+* In this workshop we deploy the API to a stage called "ZombieWorkshopStage". In your real world scenario, you'll likely create stages such as "production" or "development" which align to the actual stages of your API development process.
 
 **LAB 1 COMPLETE**
 
-As you type, POST requests are being made to the Talkers DynamoDB table to continuously update the table with timestamps for who is typing. Continuous polling (GET Requests) on that table also occurs to check which survivors are typing, which updates the "Users Typing" field in the web app.
+Head back to the survivor chat app and as you type, POST requests are being made to the Talkers API resource which is updating a DynamoDB table continuously with timestamps along with who is typing. Continuous polling (GET Requests) on that table (via API Gateway GET Requests to the /talkers resource) also occurs to determine which survivors are typing, which updates the "Users Typing" field in the web app.
 
 ![talker resource](/Images/Typing-Done.png)
 
@@ -355,15 +353,15 @@ In this section, you’ll create a free-trial Twilio SMS phone number. You will 
 
 * As you'll see throughout this workshop, we will leverage separate Lambda functions to pre-process data before sending standardized/formatted requests to the /zombie/message resource. This allows us to-reuse the existing DynamoDB logic behind the /message resource multiple times rather than writing multiple functions that all interact with DynamoDB individually. As messages come in to your Twilio number, the Twilio webhook forwards them as POSTs to your /zombie/twilio resource, which will be integrated with a backend pre-processing Lambda function. This function will strip apart the Twilio payload and format it before making a signed SigV4 HTTPS POST to your /zombie/message service which requires IAM authorization.
 
-12\. Click **Create a Lambda function** and select **Skip** on the blueprint screen as we will be creating a brand new function. Click **Next** to skip through the Configure Triggers screen.
+12\. Click **Create a Lambda function** and select the blueprint titled **Blank Function** as we will be creating a brand new function. Click **Next** to skip through the Configure Triggers screen.
 
-13\. Create a name for the function, such as **"[Your CloudFormation stack name]-TwilioProcessing"**. Leave the "Runtime" as **Node.js 4.3**. From the GitHub repo, open the **TwilioProcessing.js** file. Copy the entire contents from this file into the Lambda code entry section. Once you have copied the code into Lambda, scroll down to [line 8](/Twilio/TwilioProcessing.js#L8) in the code where the "API" variable is declared. API.endpoint should show a value of "INSERT YOUR API GATEWAY URL HERE INCLUDING THE HTTPS://". Please replace this string with the fully qualified domain name (FQDN) of the URL for your **/zombie/message** POST method found in API Gateway. For example, it should look something like "https://xxxxxxxx.execute-api.us-west-2.amazonaws.com".
+13\. Create a name for the function, such as **"[Your CloudFormation stack name]-TwilioProcessing"**. Leave the "Runtime" as **Node.js 4.3**. From the GitHub repo, open the **TwilioProcessing.js** file. Delete the sample code in the Lambda editor and copy the entire contents from this file into the Lambda code entry section. Once you have copied the code into Lambda, scroll down to [line 8](/Twilio/TwilioProcessing.js#L8) in the code where the "API" variable is declared. API.endpoint should show a value of "INSERT YOUR API GATEWAY URL HERE INCLUDING THE HTTPS://". Please replace this string with the fully qualified domain name (FQDN) of the URL for your **/zombie/message** POST method found in API Gateway. For example, it should look something like "https://xxxxxxxx.execute-api.us-west-2.amazonaws.com".
 
 You should also fill in the region code in the variable **API.region**. This should be the region where you launched CloudFormation.
 
 Finally you will also copy in the name of your DynamoDB Users table that was created for you. This should be placed in the **table** variable. You will also need to copy in the name of your "phoneindex" (this is an index that was created on the DynamoDB table to assist with querying). These attributes can be found in the Outputs section in CloudFormation. You should be copying the values for **DynamoDBUsersTableName** and **DynamoDBUsersPhoneIndex** from CloudFormation.
 
-* Many of the functions in this workshop are authored in Nodejs 0.10 but will work regardless of the version of Node you choose when creating your Function in the console. The workshop will soon be upgraded to use Nodejs 4.3.
+* Some of the functions in this workshop were originally authored for Nodejs 0.10 but are still capable of running in the Node4.3 runtime. The workshop will soon be upgraded to use Nodejs 4.3.
 
 14\. After you have copied the code into the Lambda inline code console and modified the variables, scroll down to the **Lambda function handler and role** section. **Choose an existing role** should be selected from the dropdown. Then for the existing **role**, select the role that looks like **[Your stack name]-ZombieLabLambdaRole...**. For simplicity we are reusing the same Lambda role for our functions.
 
@@ -459,7 +457,7 @@ In this lab you'll launch an Elasticsearch Service cluster and setup DynamoDB St
 
 10\. Select **Create a Lambda Function**.
 
-11\. Skip the Blueprint section by selecting the Skip button in the bottom right.
+11\. On the Blueprints screen select **Blank Function** to create a Lambda function from scratch.
 
 12\. In Configure Triggers section, select the DynamoDB event source type and then select the **messages** DynamoDB table. It should appear as **"[Your CloudFormation stack name]-messages"**. Then set the **Batch size** to **5**, the **Starting position** to **Lastest** and select the checkbox **Enable trigger**. Then click on Next button.
 
@@ -513,7 +511,7 @@ If you aren't familiar with Slack, they offer a free chat communications service
 
 7\. Click **Create a Lambda function**. You'll create a Lambda function to parse incoming Slack messages and send them to the Chat Service.
 
-8\. Skip past the blueprints page as we will not be using one. Also skip past the triggers page by selecting **Next**.
+8\. On the Blueprints page select **Blank Function** to create a function from scratch. Also skip past the triggers page by selecting **Next**.
 
 9\. Give your function a name such as **"[Your CloudFormation Stack name]-SlackService"**. For the Nodejs version, you can keep the default Nodejs 4.3 selected. Now navigate to the GitHub repo for this workshop, or the location where you downloaded the GitHub files to your local machine.
 
