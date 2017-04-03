@@ -100,11 +100,11 @@ When inside the Cognito service console, click the blue button **Manage your Use
 
 3\. In the "Pool Name" text box, name your user pool **[Your CloudFormation stack name]-userpool**. For example, if you named your CloudFormation stack "sample" earlier, then your user pool name would be "sample-userpool". After naming your User Pool, click **Step through Settings** to continue with manual setup.
 
-4\. On the attributes page, select the required checkbox for the following attributes: **email, name, phone number**.
+4\. On the attributes page, select the "Required" checkbox for the following attributes: **email, name, phone number**.
 
 * Cognito User Pools allows you to define attributes that you'd like to associate with users of your application. These represent values that your users will provide when they sign up for your app. They are available to your application as a part of the session data provided to your client apps when users authenticate with Cognito.
 
-5\. Click the link "Add custom attribute". Leave all the defaults and type a "Name" of **slackuser** exactly as typed here. Add 2 additional custom attributes, **slackteamdomain** and **camp**.
+5\. Click the link "Add custom attribute". Leave all the defaults and type a "Name" of **slackuser** exactly as typed here. Add 2 additional custom attributes: **slackteamdomain** and **camp**.
 
 * Within a User Pool, you can specify custom attributes which you define when you create the User Pool. For the Zombie Survivor chat application, we will include 3 custom attributes.
 
@@ -122,7 +122,7 @@ Click **Next Step**.
 
 8\. On the "Message Customizations" page, in the section titled **Do you want to customize your email verification message?** add a custom email subject such as "Signal Corps Survivor Confirmation". We won't modify the message body but you could add your own custom message in there. We'll let Cognito send the emails from the service email address, but in production you could configure Cognito to send these verifications from an email server you own. Leave the rest of the default settings and click **Next step**. 
 
-On the Devices page, leave the default option of "No" selected. We will not configure the User Pool to remember user's devices.
+On the Tags page, leave the defaults and click **Next step**. Next, on the Devices page, leave the default option of "No" selected. We will not configure the User Pool to remember user's devices.
 
 9\. On the Apps page, click **Add an app**. In the **App Name** textbox, type "Zombie Survivor Chat App" and **deselect the client secret checkbox**. Click **Set attribute read and write permissions**. You need to make sure that the app has "writable" and "readable" access to the attributes you created. Make sure that **all of the checkboxes are selected** for "Readable Attributes" and "Writable Attributes". Then click **Create app**, and then click **Next step**.
 
@@ -166,7 +166,7 @@ On the top navigation bar in the management console, switch to **Federated Ident
 
 You should have copied these from your User Pool earlier when you set it up. If you do not have these copied, please navigate back to your Cognito User Pool you created earlier and locate your User Pool Id and App Client ID.
 
-Scroll to the bottom of the page and click **Save Changes** to save the User Pool configuration settings. Your Cognito User Pool is now setup to federate into your Identity Pool and assume temporary credentials for users who authenticate into the app.
+Scroll to the bottom of the page and click **Save Changes** to save the User Pool configuration settings. Your Cognito Federated Identiy Pool has been configured with Congito User Pool as an IdP. When users authenticate to the User Pool, they will assume temporary credentials with the permissions allowed via the Authenticated Role.
 
 16\. You will now make an update to an application config file so that the serverless Javascript application can communicate with your User Pool to log users in.
 
@@ -178,7 +178,9 @@ Navigate to the Amazon S3 console **in the region where you launched your CloudF
 
 17\. On the Amazon S3 buckets listing page, find and click into the bucket that was created for you by CloudFormation. It should be named with your stack name prepended to the beginning. Something like [CloudFormation Stack Name]-s3bucketforwebsitecontent"....
 
-18\. This bucket contains all the contents for hosting your serverless JS app as well as the source code for the workshop's Lambda functions and CloudFormation resources. Please do not delete these contents. Click into the folder (prefix) named "S3" and finally to the file **S3/assets/js/constants.js**
+* In the S3 Console search bar you can type **s3bucketforwebsitecontent** and your S3 bucket will display.
+
+18\. This bucket contains all the contents for hosting your serverless JS app as well as the source code for the workshop's Lambda functions and CloudFormation resources. Please do not delete these contents. Click into the folder (prefix) named **S3** and navigate through to the file **S3/assets/js/constants.js**
 
 Download the **S3/assets/js.constants.js** file to your local machine and open it with a text editor.
 
@@ -186,11 +188,11 @@ Download the **S3/assets/js.constants.js** file to your local machine and open i
 
 19\. Open up the constants.js file and copy over the User Pool ID into the "USER_POOL_ID" variable. Then copy the App Client ID into the "CLIENT_ID" variable. These should be copied from the open text file you had open from earlier.
 
-* Your serverless javascript zombie application uses the values in this file at runtime to communicate with the different services of the workshop.
+* Your serverless javascript zombie application requires this constants values in file communicate with the different services of the workshop.
 
 * The Identity Pool Id was automatically filled in with several other variables when the CloudFormation template was launched.
 
-20\. Save the constants.js file and upload it back to S3. In the S3 console window, click the blue **Upload** button and upload the constants.js file from your local machine. **Make sure to click "Set Details->SetPermissions" and select the checkbox "Make everything public"**. Then click **Start Upload** and it should overwrite the old constants file with the new one. Make sure you are uploading the file back to the same directory where you originally downloaded it from.
+20\. Save the constants.js file and upload it back to S3. While in the S3 console window, make sure you are in the **js** directory. Click the blue **Upload** button and upload the constants.js file from your local machine. Within the upload dialog, select the "Manage public permissions" dropdown and set the permissions on the file to read-only for the public by selecting the **Read** checkbox next to Everyone under the Objects category. You can also drag your file from your local machine into the S3 browser console to initiate an upload and then when the object is uploaded, make sure to select **Make Public**.
 
 * Your application now has the configuration it needs to interact with Cognito.
 
@@ -212,9 +214,20 @@ When done, click **Sign Up**.
 
 24\. A form should appear asking you to type in your confirmation code. Please check your inbox for the email address you signed up with. You should received an email with the subject "Signal Corps Survivor Confirmation" (May be in your Spam folder!). Copy over the verification code and enter into the confirmation window.
 
+**Troubleshooting tips:** 
+
+* If you are getting errors during the signup, please revisit the settings for your Cognito User Pool. You need to make sure that you've done the following -  
+
+    * Configured your Cognito Lambda triggers for both the **Pre-Authentication** and **Post-Confirmation** steps as described in Step 10.
+
+    * Properly modified the constants.js config file and re-uploaded it to the JS directory for your application in S3. After you uploaded this constants.js file, you should have refreshed your zombie chat browser application page so that it could pull down the latest JS files. The application is client-side and needs this file's properties in order to bootstrap itself.
+
+* Users created in the application are also stored in a DynamoDB table named "Users". If you did not have your Cognito triggers set up correctly, you will need to navigate to the DynamoDB Users table and delete the entry for your user. You can then re-register in the application again.
+
+
 ![Confirm your signup](/Images/Cognito-Step24.png)
 
-After confirming your account, sign in with your credentials and begin chatting!
+After confirming your account, sign in with your credentials and begin chatting! You should see a red button called **Start Chatting** - click that button to toggle your session on. You may then begin typing messages followed by the "Enter" key to submit them.
 
 25\. Your messages should begin showing up in the central chat pane window. Feel free to share the URL with your teammates, have them signup for accounts and begin chatting as a group! If you are building this solution solo, you can create multiple user accounts with different email addresses. Then login to both user accounts in different browsers to simulate multiple users.
 
