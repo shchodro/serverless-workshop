@@ -116,11 +116,11 @@ Click **Next Step**.
 
 6\. On the Policies page, leave the Password policy settings as default and click **Next step**.
 
-7\. On the verifications page, leave the defaults and click **Next step**. 
+7\. On the verifications page, leave the defaults and click **Next step**.
 
 * We will not require MFA for this application. However, for during sign up we are requiring verification via email address. This is denoted with the email checkbox selected for "Do you want to require verification of emails or phone numbers?". With this setting, when users sign up for the application, a confirmation code will be sent to their email which they'll be required to input into the application for confirmation.
 
-8\. On the "Message Customizations" page, in the section titled **Do you want to customize your email verification message?** add a custom email subject such as "Signal Corps Survivor Confirmation". We won't modify the message body but you could add your own custom message in there. We'll let Cognito send the emails from the service email address, but in production you could configure Cognito to send these verifications from an email server you own. Leave the rest of the default settings and click **Next step**. 
+8\. On the "Message Customizations" page, in the section titled **Do you want to customize your email verification message?** add a custom email subject such as "Signal Corps Survivor Confirmation". We won't modify the message body but you could add your own custom message in there. We'll let Cognito send the emails from the service email address, but in production you could configure Cognito to send these verifications from an email server you own. Leave the rest of the default settings and click **Next step**.
 
 On the Tags page, leave the defaults and click **Next step**. Next, on the Devices page, leave the default option of "No" selected. We will not configure the User Pool to remember user's devices.
 
@@ -214,7 +214,7 @@ When done, click **Sign Up**.
 
 24\. A form should appear asking you to type in your confirmation code. Please check your inbox for the email address you signed up with. You should received an email with the subject "Signal Corps Survivor Confirmation" (May be in your Spam folder!). Copy over the verification code and enter into the confirmation window.
 
-**Troubleshooting tips:** 
+**Troubleshooting tips:**
 
 * If you are getting errors during the signup, please revisit the settings for your Cognito User Pool. You need to make sure that you've done the following -  
 
@@ -239,7 +239,7 @@ After confirming your account, sign in with your credentials and begin chatting!
 
 **What you'll do in this lab...**
 
-In this section you will create functionality in your chat application that allows survivors to see which survivors in the chat room are currently typing. To configure this functionality, you will modify your API to integrate with backend Lambda functions that are responsible for querying and returning the users currently typing in the system, as well as updating metadata in the "talkers" DynamoDB table that contains details about which survivors are typing at which times. The survivor chat app continuously polls this API endpoint with GET requests to determine who is typing. As survivors are typing, POST requests are made to this same endpoint to update the talkers DynamoDB table. 
+In this section you will create functionality in your chat application that allows survivors to see which survivors in the chat room are currently typing. To configure this functionality, you will modify your API to integrate with backend Lambda functions that are responsible for querying and returning the users currently typing in the system, as well as updating metadata in the "talkers" DynamoDB table that contains details about which survivors are typing at which times. The survivor chat app continuously polls this API endpoint with GET requests to determine who is typing. As survivors are typing, POST requests are made to this same endpoint to update the talkers DynamoDB table.
 
 The typing indicator shows up in the web chat client in a section below the chat message panel. The UI and backend Lambda functions have already been implemented, and this lab focuses on how to configure your new integration in API Gateway.
 
@@ -274,7 +274,7 @@ The application uses [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.
 
 8\. Select the blue **Save** button and click **OK** if a pop up asks you to confirm that you want to switch to Lambda integration. Then grant access for API Gateway to invoke the Lambda function by clicking "OK" again. This 2nd popup asks you to confirm that you want to allow API Gateway to be able to invoke your Lambda function.
 
-9\. Click the **Method Execution** back button to return to the method execution overview page. You'll now tell API Gateway what types of HTTP response types you want your API to expose. Click the **Method Response** section of the Method Execution Flow. 
+9\. Click the **Method Execution** back button to return to the method execution overview page. You'll now tell API Gateway what types of HTTP response types you want your API to expose. Click the **Method Response** section of the Method Execution Flow.
 
 10\. Add a 200 HTTP Status response. Click "Add Response", type "200" in the status code text box and then click the little checkmark to save the method response, as shown below.
 ![Method Response](/Images/Typing-Step10.png)
@@ -284,11 +284,11 @@ The application uses [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.
 11\. Go to the /zombie/talkers/POST method by clicking the "POST" option in the resource tree on the left navigation pane.
 ![POST Method](/Images/Typing-Step11.png)
 
-12\. We're now going to configure to the /zombie/talkers resource to properly integrate with AWS Lambda on POST requests. 
+12\. We're now going to configure to the /zombie/talkers resource to properly integrate with AWS Lambda on POST requests.
 
 **Perform Steps 4-10 again** just as you did for the GET method. However, this time when you are selecting the Lambda Function for the Integration Request, you'll type "writetalkers" in the auto-fill and select the function that looks something like this... **[CloudformationTemplateName]-[XXXXXXX]-WriteTalkersToDynamoDB-[Your Region]**. This way on POST requests, API Gateway will invoke your **writetalkers** Lambda function. Don't forget to return to the Method Response section for this POST method and add a "200" HTTP response status as you did for the GET method earlier, if it doesn't exist already.
 
-* In these steps you are configuring the POST method that is used by the chat app to insert data into DynamoDB Talkers table with details about which users are typing. You're performing the same exact method configuration for the POST method as you did for your GET method. However, since this POST method is used for sending data to the database, it triggers a different backend Lambda function. This function writes data to DynamoDB while the "GetTalkersToDynamoDB" function was used to retrieve data from DynamoDB. 
+* In these steps you are configuring the POST method that is used by the chat app to insert data into DynamoDB Talkers table with details about which users are typing. You're performing the same exact method configuration for the POST method as you did for your GET method. However, since this POST method is used for sending data to the database, it triggers a different backend Lambda function. This function writes data to DynamoDB while the "GetTalkersToDynamoDB" function was used to retrieve data from DynamoDB.
 
 	* You could optionally include the logic for both the POST and GET operations inside of a single Lambda function with your own built-in logic that properly checks for and handles POSTs and GETs (or other actions).
 
@@ -304,7 +304,7 @@ The application uses [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.
 
 18\. Add a new Integration response with a method response status of 200. Click the "Method response status" dropdown and select "200". Leave the "Content Handling" option set to **Passthrough**. When done, click the blue **Save** button.
 
-* In this section you configured the OPTIONS method simply to respond with HTTP 200 status code. The OPTIONS method type is simply used so that clients can retrieve details about the API resources that are available as well as the methods associated with them. 
+* In this section you configured the OPTIONS method simply to respond with HTTP 200 status code. The OPTIONS method type is simply used so that clients can retrieve details about the API resources that are available as well as the methods associated with them.
 
 19\. Select the /zombie/talkers resource on the left navigation tree.
 ![talker resource](/Images/Typing-Step19.png)
@@ -345,23 +345,25 @@ In this section, you’ll create a free-trial Twilio SMS phone number. You will 
 2\. Once you have created your account, login to the Twilio console and navigate to the Home icon on the left navigation pane. On the Home screen/console dashboard, scroll down to the **Phone Numbers** section and click "Phone Numbers".
 ![Manage Twilio Phone Number](/Images/Twilio-Step2.png)
 
-3\. On the Phone Numbers screen, click "Get Started" to assign a phone number to your account. Then click the red "Get your first Twilio phone number" button. We’re going to generate a 10-digit phone number in this lab, but a short-code would also work if preferred. This number should be enabled for voice and messaging by default. A popup will appear with your new phone number, if the proposed phone number supports messaging, click "Choose this number" and go to the next step. If the proposed phone number does not support messaging, click "Search for a different number", select your country and select the checkbox "SMS", then click "Search". Twilio propose a list of phone number, select "Choose number" for one of them. Then, type your address, click "Save and continue" and "Done".
+3\. On the Phone Numbers screen, click **Get Started** to assign a phone number to your account. Then click the red **Get your first Twilio phone number** button. We’re going to generate a 10-digit phone number in this lab, but a short-code would also work if preferred. This number should be enabled for voice and messaging by default. A popup will appear with your new phone number, click **Choose this number**. If the proposed phone number does not support messaging, click "Search for a different number", select your country and select the checkbox "SMS", then click "Search". Twilio propose a list of phone number, select "Choose number" for one of them. Then, type your address, click "Save and continue" and "Done".
 
-*These are US phone numbers. You can provision an international phone number if doing this workshop outside the U.S. Twilio terms and conditions and pricing applies. Please see their website for those details.*
+* **International Users** - These are US phone numbers that you are provisioning in Twilio. Currently this workshop only supports US phone numbers due to the necessary # formatting logic that has yet to be introduced into this workshop.
+
+If you have an international mobile device and are concerned about international text message fees, you can still do this lab. Simply configure a US phone number within Twilio and then use any free online text messaging website, such as Sendatext, to send a text message to your Twilio phone number.*
 
 4\. Once you’ve received a phone number, click the **Manage Numbers** button on the left navigation pane. Click on your phone number, which will take you to the properties page for that number.
 
 5\. Scroll to the bottom of the properties page, to the **Messaging** section. In the **Configure With** dropdown, select the **Webhooks/TwiML** option. Leave this page open for now and proceed to the next step.
 
-* The Twilio webhooks section allows you to integrate your phone number with third party services. In this case, you're going to configure your Twilio phone number to forward any messages sent to that number to your API Gateway endpoint with POST HTTP requests.
+* The Twilio webhooks section allows you to integrate your phone number with third party services. In this case, you're going to configure your Twilio phone number to forward any messages it receives over to your API Gateway /zombie/twilio resource with POST requests.
 
 6\. Now you’ll retrieve your **/zombie/twilio** API endpoint from API Gateway and provide it to Twilio to hook up to AWS. Open the AWS Management console in a new tab, and navigate to API Gateway, as illustrated below. Be sure to leave the Twilio tab open as you’ll need it again to finish setup.
 ![API Gateway in Management Console](/Images/Twilio-Step6.png)
 
-7\. In the API Gateway console, select your API, **Zombie Workshop API Gateway**. On the left navigation tree, click **Stages**.
+7\. In the API Gateway console, select your API.  Then on the left navigation tree, under your API, click **Stages**.
 ![API Gateway Resources Page](/Images/Twilio-Step7.png)
 
-8\. With "Stages" selected, expand the "Zombie Workshop Stage" by clicking the blue arrow, and select the **POST** method for the **/zombie/twilio** resource. The **/zombie/twilio** resource is the endpoint that CloudFormation created specifically for SMS integration with Twilio. You should see an **Invoke URL** displayed for your **/zombie/twilio** resource, as shown below.
+8\. With "Stages" selected, expand the "ZombieWorkshopStage" by clicking the blue arrow. Once expanded, select the **POST** method for the **/zombie/twilio** resource. The **/zombie/twilio** resource is the endpoint that we automatically created for you in CloudFormation for SMS integration with twilio.com. You should see an **Invoke URL** displayed for your **/zombie/twilio** resource, as shown below.
 ![API Gateway Invoke URL](/Images/Twilio-Step8.png)
 
 9\. Copy the **Invoke URL** and return to the Twilio website. On the Twilio page that you left open, paste the Invoke URL from API Gateway into the text box next to the label **A message comes in**. Ensure that the request type is set to **HTTP POST**. This is illustrated below.
@@ -369,52 +371,52 @@ In this section, you’ll create a free-trial Twilio SMS phone number. You will 
 
 10\. Click **Save** to finalize the setup connecting Twilio to your API.
 
-11\. You will now create the Lambda Function that processes your incoming Twilio messages, parses them, and pushes them to the "/messages" Chat Service. To begin, navigate to the Lambda console.
+11\. You will now create the Lambda Function that processes your incoming Twilio messages, parses the message, and proxies it along to your /zombie/message Chat Service. To begin, navigate to the Lambda console.
 
-* As you'll see throughout this workshop, we will leverage separate Lambda functions to pre-process data before sending standardized/formatted requests to the /zombie/message resource. This allows us to-reuse the existing DynamoDB logic behind the /message resource multiple times rather than writing multiple functions that all interact with DynamoDB individually. As messages come in to your Twilio number, the Twilio webhook forwards them as POSTs to your /zombie/twilio resource, which will be integrated with a backend pre-processing Lambda function. This function will strip apart the Twilio payload and format it before making a signed SigV4 HTTPS POST to your /zombie/message service which requires IAM authorization.
+* As you'll see throughout this workshop, we will leverage separate Lambda functions to pre-process data before sending standardized/formatted requests to the /zombie/message resource. This allows us to-reuse the existing DynamoDB logic sitting behind the /zombie/message resource rather than writing multiple separate functions that all interact with DynamoDB individually. As messages come in to your Twilio number, the Twilio webhook forwards them with HTTP POST requests to your /zombie/twilio resource, which will be integrated with a backend pre-processing Lambda function. This pre-processing function will strip apart the Twilio payload and format it before making a signed SigV4 HTTPS POST to your /zombie/message service which requires IAM authorization in order to be invoked.
 
 12\. Click **Create a Lambda function** and select the blueprint titled **Blank Function** as we will be creating a brand new function. Click **Next** to skip through the Configure Triggers screen.
 
-13\. Create a name for the function, such as **"[Your CloudFormation stack name]-TwilioProcessing"**. Leave the "Runtime" as **Node.js 4.3**. From the GitHub repo, open the **TwilioProcessing.js** file. Delete the sample code in the Lambda editor and copy the entire contents from this file into the Lambda code entry section. Once you have copied the code into Lambda, scroll down to [line 8](/Twilio/TwilioProcessing.js#L8) in the code where the "API" variable is declared. API.endpoint should show a value of "INSERT YOUR API GATEWAY URL HERE INCLUDING THE HTTPS://". Please replace this string with the fully qualified domain name (FQDN) of the URL for your **/zombie/message** POST method found in API Gateway. For example, it should look something like "https://xxxxxxxx.execute-api.us-west-2.amazonaws.com".
+13\. Create a name for the function, such as **"[Your CloudFormation stack name]-TwilioProcessing"**. Set the "Runtime" as **Node.js 4.3**. In the source code found on Github, open the **TwilioProcessing.js** file found inside the **/Twilio** folder. Delete the sample code in the Lambda console editor and replace it with the entire contents from your TwilioProcessing.js file. Once you have copied the code into Lambda, scroll down to [line 8](/Twilio/TwilioProcessing.js#L8) in the code where the **API** variable is declared. **API.endpoint** should show a value of "INSERT YOUR API GATEWAY URL HERE INCLUDING THE HTTPS://". Please replace this string with the fully qualified domain name (FQDN) of the URL for your **/zombie/message** POST method found in API Gateway. For example, it should look something like "https://xxxxxxxx.execute-api.us-west-2.amazonaws.com".
 
 You should also fill in the region code in the variable **API.region**. This should be the region where you launched CloudFormation.
 
-Finally you will also copy in the name of your DynamoDB Users table that was created for you. This should be placed in the **table** variable. You will also need to copy in the name of your "phoneindex" (this is an index that was created on the DynamoDB table to assist with querying). These attributes can be found in the Outputs section in CloudFormation. You should be copying the values for **DynamoDBUsersTableName** and **DynamoDBUsersPhoneIndex** from CloudFormation.
+Next, you will also copy in the name of your DynamoDB **Users** table that was created for you. This should be named as **[Your CloudFormation Stack Name]-users"**. You should copy this table name into the **table** variable in your Lambda code. You will also need to copy in the name of your "phoneindex" (this is an index that was created on the DynamoDB table to assist with querying). These attributes can be found in the Outputs section in CloudFormation. You should be copying the values for **DynamoDBUsersTableName** and **DynamoDBUsersPhoneIndex** from CloudFormation.
 
-* Some of the functions in this workshop were originally authored for Nodejs 0.10 but are still capable of running in the Node4.3 runtime. The workshop will soon be upgraded to use Nodejs 4.3.
+* Some of the functions in this workshop were originally authored for Nodejs 0.10 but are still capable of running in the Node4.3 runtimes +. The workshop will soon be upgraded to use the latest Nodejs runtime that is supported by Lambda.
 
 14\. After you have copied the code into the Lambda inline code console and modified the variables, scroll down to the **Lambda function handler and role** section. **Choose an existing role** should be selected from the dropdown. Then for the existing **role**, select the role that looks like **[Your stack name]-ZombieLabLambdaRole...**. For simplicity we are reusing the same Lambda role for our functions.
 
-15\. Set the **timeout** field to 30 seconds and keep all the rest of the defaults set. Then click **Next** and then **Create function** on the Review page to create your Lambda function.
+15\. Under "Advancted settings", set the **Timeout** field to 30 seconds and keep all the rest of the defaults set. Then click **Next** and then **Create function** on the Review page to create your Lambda function.
 
-* You have just created a Lambda function that accepts the querystring params from the incoming API Gateway /twilio endpoint, converts the parameters to the correct format for our Chat Service including a conversion to JSON format, and finally makes an HTTPS POST request to the /zombie/message Chat Service endpoint. That endpoint will take care of inserting the data into the DynamoDB messages table.
+* You have just created a Lambda function that is integrated as the backend for your /zombie/twilio resource POST method. The function converts the parameters to the correct format for our Chat Service including a conversion to JSON format, and makes an HTTPS POST request to the /zombie/message Chat Service resource. That endpoint will take care of inserting the data into the DynamoDB messages table.
 
-16\. Now that you have created the TwilioProcessing function, you need to connect it to the **POST** method for your /zombie/twilio endpoint. Navigate back to the API Gateway console and select **POST** under the **/twilio** endpoint.
+16\. Now that you have created the TwilioProcessing function, you need to connect it to the **POST** method for your /zombie/twilio endpoint. Navigate back to the API Gateway console and select the **POST** method for your **/zombie/twilio** resource.
 
 17\. On the **Method Execution** screen for the "POST" method, the "Integration Request" box should show a type of **MOCK** for your /twilio resource.
 
-18\. You will now change the **Integration Request** so that instead of integrating with a Mock integration, it will integrate with your TwilioProcessing function. Click **Integration Request**. On the Integration Request screen, change the "Integration type" radio button to **Lambda Function**. In the "Lambda Region" dropdown, select the region in which you created your TwilioProcessing Lambda function, and where you launched your CloudFormation Stack. For the **Lambda Function**, begin typing "TwilioProcessing" and the autofill should display your function. Select your **TwilioProcessing** function from the autofill. Click **Save**. In the popup window, confirm that you want to switch to Lambda Integration by clicking **OK**. Then confirm that you want to give API Gateway permission to invoke your function by clicking **OK**. Wait a few seconds for the changes to save.
+18\. You will now change the **Integration Request** so that instead of integrating with a Mock integration, it will integrate with your TwilioProcessing Lambda function. Click **Integration Request**. On the Integration Request screen, change the "Integration type" radio button to **Lambda Function**. In the "Lambda Region" dropdown, select the region in which you created your TwilioProcessing Lambda function, and where you launched your CloudFormation Stack. For the **Lambda Function**, begin typing "TwilioProcessing" and the autofill should display your function. Select your **TwilioProcessing** function from the autofill. Click **Save**. In the popup window, confirm that you want to switch to Lambda Integration by clicking **OK**. Then confirm that you want to give API Gateway permission to invoke your function by clicking **OK**. Wait a few seconds for the changes to save.
 
-19\. After clicking **Save**, you will be brought back to the Method Execution page for your "POST" method. Return back to the **Integration Request** screen so that you can configure a Mapping Template. To do this, click **Integration Request** in the Method Execution screen.
+19\. You will be brought back to the Integration Request page for your "POST" method.
 
 20\. Twilio sends data from their API with a content-type of "application/x-www-form-urlencoded", but Lambda requires the content-type to be "application/json" for any payload parameters sent to it. You will configure a Mapping Template so that API Gateway converts the content type of incoming messages into JSON before executing your backend Lambda TwilioProcessing function with the parameters.
 
-21\. On the Integration Request screen for your /twilio POST method, expand the **Body Mapping Templates** section and click **Add mapping template**. In the textbox for "Content-Type", input **application/x-www-form-urlencoded** and click the little checkmark button to continue. Once you have clicked the little checkbox, a popup window will appear asking if you want to only allow requests that match the Content-Type you specificed. Click **Yes, secure this integration**. A new section will appear on the right side of the screen with a dropdown for **Generate Template**. Click that dropdown and select **Method Request Passthrough**.
+21\. On the Integration Request screen for your /zombie/twilio POST method, expand the **Body Mapping Templates** section and click **Add mapping template**. In the textbox for "Content-Type", input **application/x-www-form-urlencoded** and click the little checkmark button to continue. Once you have clicked the little checkbox, a popup window will appear asking if you want to only allow requests that match the Content-Type you specified. Click **Yes, secure this integration**. A new section will appear below with a dropdown for **Generate Template**. Click that dropdown and select **Method Request Passthrough**.
 
-22\. A "Template" text editor window will appear. In this section you will input a piece of VTL transformation logic to convert the incoming Twilio data to a JSON object. In this text editor, **delete all of the pre-filled content** and copy the following code into the editor.
+22\. A "Template" text editor window will appear. In this section you will input a piece of VTL transformation logic to convert the incoming Twilio data to JSON format. In this text editor, **delete all of the pre-filled content** and copy the following code into the editor.
 
 ```{"postBody" : "$input.path('$')"}```
 
-After copying the code into the editor, click the **Save** button. You have now setup the POST method to convert the incoming data to JSON anytime a POST request is made to your /twilio endpoint with a Content-Type of "application/x-www-form-urlencoded". This should look like the screenshot below:
+After copying the code into the editor, click the **Save** button. You have now setup the POST method to convert the incoming data to JSON anytime a POST request is made to your /zombie/twilio resource with a Content-Type of "application/x-www-form-urlencoded". This should look like the screenshot below:
 ![Twilio Integration Request Mapping Template](/Images/Twilio-Step22.png)
 
 23\. Now that you have configured the Integration Request to transform incoming messages into JSON, we need to configure the Integration Response to transform outgoing responses back to Twilio into XML format since the Twilio API requires XML as a response Content-Type. This step is required so that when you send SMS messages to the survivor Chat Service, it can respond back to your Twilio Phone Number with a confirmation message that your message was received successfully.
 
-24\. Head back to the Method Execution screen for the twilio POST method. On the "Method Execution" screen for your /twilio POST method, click **Integration Response**. On the "Integration Response" screen, click the black arrow to expand the method response section. Expand the **Body Mapping Templates** section. You should see a Content-Type of "application/json". We need a Content-Type of XML, not JSON, so **delete this Content-Type by clicking the little black minus icon** and click **Delete** on the pop-up window.
+24\. Head back to the Method Execution screen for the twilio POST method. On the "Method Execution" screen for your /zombie/twilio POST method, click **Integration Response**. On the "Integration Response" screen, click the black arrow to expand the method response section. Expand the **Body Mapping Templates** section. You should see a Content-Type of "application/json". We need a Content-Type of XML, not JSON, so **delete this Content-Type by clicking the little black minus icon** and click **Delete** on the pop-up window.
 
 25\. Click **Add mapping template** similar to the way you did this in the earlier steps for the Integration Request section.
 
-26\. In the "Content-Type" text box, insert **application/xml** and click the little black checkmark to continue. Similar to the steps done earlier, we are going to copy VTL mapping logic to convert the response data to XML from JSON. This will result in your /twilio POST method responding to requests with XML format. After you have created the new content-type, a new section will appear on the right side of the screen with a dropdown for **Generate Template**. Click that dropdown and select **Method Request Passthrough**.
+26\. In the "Content-Type" text box, insert **application/xml** and click the little black checkmark to continue. Similar to the steps done earlier, we are going to copy VTL mapping logic to convert the response data to XML from JSON. This will result in your /zombie/twilio POST method responding to requests with XML format. After you have created the new content-type, a new section will appear below with a dropdown for **Generate Template**. Click that dropdown and select **Method Request Passthrough**.
 In the text editor, delete all the code already in there and copy the following into the editor:
 
 ```
@@ -435,13 +437,18 @@ The result should look like the screenshot below:
 
 ![Twilio Integration Response Mapping Template](/Images/Twilio-Step26.png)
 
-27\. Then scroll up and click the blue **Save** button on the screen. Finally click the **Actions** button on the left side of the API Gateway console and choose **Deploy API** to deploy your API. In the Deploy API window, select **ZombieWorkshopStage** from the dropdown and click **Deploy**.
+27\. Scroll up and click the blue **Save** button on the screen. Finally click the **Actions** button on the left side of the API Gateway console and choose **Deploy API** to deploy your API. In the Deploy API window, select **ZombieWorkshopStage** from the dropdown and click **Deploy**.
 
-28\. You are now ready to test out Twilio integration with your API. Send a text message to your Twilio phone number.
+28\. You are now ready to test out Twilio integration with your API. Send a text message to your Twilio phone number from your mobile device.
 
 **LAB 2 COMPLETE**
 
 If the integration was successful, you should receive a confirmation response text message and your text message you sent should display in the web app chat room as coming from your Twilio Phone Number. You have successfully integrated Twilio text message functionality with API Gateway.
+
+* **Troubleshooting tip**: If you are unable to send text messages, please ensure you are sending from the same phone number that you registered when you signed up for a survivor account in the Zombie Chat. If you review the TwilioProcessing Lambda function you will see that the code is checking the DynamoDB users table to confirm if the incoming message forward to us from Twilio was sent from an authorized phone number. Twilio provides that to us when it sends the message to our API.
+
+* **For international users**: If you have an international phone number and want to send text messages -
+  1. Modify your user record in the DynamoDB Users table with your correct International Phone Number. You need to do this in DynamoDB directly, because the JS chat application performs validation that requires a 10 digit US phone number on the client. After modifying this in DynamoDB, you should be able to send text messages to your Twilio phone number from your international phone number because the the Lambda phone number validation in the code will recognize your phone number.
 
 * * *
 
