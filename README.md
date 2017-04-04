@@ -347,9 +347,9 @@ In this section, you’ll create a free-trial Twilio SMS phone number. You will 
 
 3\. On the Phone Numbers screen, click **Get Started** to assign a phone number to your account. Then click the red **Get your first Twilio phone number** button. We’re going to generate a 10-digit phone number in this lab, but a short-code would also work if preferred. This number should be enabled for voice and messaging by default. A popup will appear with your new phone number, click **Choose this number**. If the proposed phone number does not support messaging, click "Search for a different number", select your country and select the checkbox "SMS", then click "Search". Twilio propose a list of phone number, select "Choose number" for one of them. Then, type your address, click "Save and continue" and "Done".
 
-* **International Users** - These are US phone numbers that you are provisioning in Twilio. Currently this workshop only supports US phone numbers due to the necessary # formatting logic that has yet to be introduced into this workshop.
+* **International Users** - These are US phone numbers that you are provisioning in Twilio. You can also choose to configure an internationl number in Twilio, however there may be charges that apply. Currently this workshop only supports US phone numbers in the front end JS application due to the necessary formatting logic that has yet to be introduced into the code!
 
-If you have an international mobile device and are concerned about international text message fees, you can still do this lab. Simply configure a US phone number within Twilio and then use any free online text messaging website, such as Sendatext, to send a text message to your Twilio phone number.*
+If you have an international mobile device, you can still do this lab. When registering for a user account in the zombie chat, just use a dummy placeholder 10 digit phone number for now. Later steps in this lab will illustrate a workaround that allows you to send SMS using your international phne number*
 
 4\. Once you’ve received a phone number, click the **Manage Numbers** button on the left navigation pane. Click on your phone number, which will take you to the properties page for that number.
 
