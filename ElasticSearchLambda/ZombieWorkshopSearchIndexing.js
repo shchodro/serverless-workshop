@@ -4,7 +4,7 @@ var path = require('path');
 /* == Globals == */
 var esDomain = {
     region: 'us-west-2',
-    endpoint: 'http://ENDPOINT_HERE',
+    endpoint: 'https://ENDPOINT_HERE',
     index: 'messages',
     doctype: 'message'
 };
