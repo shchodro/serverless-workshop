@@ -1,3 +1,5 @@
+# This workshop is no longer actively being maintained and is not recommended for use. Please visit our [Wild Rydes Serverless Workshops](https://github.com/aws-samples/aws-serverless-workshops) for the latest hands-on examples of building serverless applications. This workshop is preserved here for interested community members to fork and update as separate project.
+
 # Zombie Microservices Workshop: Lab Guide
 
 ## Overview of Workshop Labs
