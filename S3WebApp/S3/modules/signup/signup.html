@@ -47,7 +47,7 @@
                 </div>
                 <div class="form-group " ng-class="{ 'has-error': signupForm.password.$touched && signupForm.password.$invalid }">
                     <div class="col-xs-12">
-                        <input name="password" class="form-control" ng-model="user.password" required placeholder="Password" type="password" ng-pattern="/^(?=.*\d)(?=.*[\^\$\*\.\[\]\{\}\(\)\?\-\“\!\@\#\%\/\,\>\<\‘\:\;\|\_\~\`]).{8,99}$/">
+                        <input name="password" class="form-control" ng-model="user.password" required placeholder="Password" type="password" ng-pattern="/^(?=.*\d)(?=.*[A-Z])(?=.*[\^\$\*\.\[\]\{\}\(\)\?\-\“\!\@\#\%\/\,\>\<\‘\:\;\|\_\~\`]).{8,99}$/">
                         <div class="help-block" ng-messages="signupForm.password.$error" ng-if="signupForm.password.$touched">
 
                             <p ng-message="required">This field is required</p>
