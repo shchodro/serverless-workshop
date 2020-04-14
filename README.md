@@ -632,7 +632,7 @@ Name the Lambda "YourWorkshopName_Zombiedetector". In the Permission Section ope
 6\. In the new appeared Combobox **Rule** choose **Create new Rule**.
 Name the Rule "Trigger1Min" and choose **Schedule Expression* in the Rule Type. Finally copy & paste "cron(*/1 * * * ? *)" into the textbox and hit **Add**
 Now the funcion will be triggered every minute.
-![Create Lambda Screenshot](/Images/lambda_5.png)
+![Create Lambda Screenshot](/Images/Lambda_5.png)
 
 7\. Click on the Lambda you created , scroll down to **Function Code** and paste [this content](/zombieSensor/lambda/exampleCronTriggerFunction.js) into the index.js window.
 
