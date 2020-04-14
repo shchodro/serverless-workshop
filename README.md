@@ -615,7 +615,7 @@ You've configured Slack to forward messages to your zombie survivor chat app. Bu
 
 In this section, you'll help protect suvivors from zombies. Zombie motion sensor devices allow communities to determine if zombies (or intruders) are nearby. You'll setup a Lambda function to send Zombie Events to a SNS Topic
 
-####Creating the AWS Backend
+#### Creating the AWS Backend
 
 **If you are following this guide during a workshop presented by AWS, please ignore the steps below, 1-3\. An SNS topic should already be configured for the workshop participants to consume messages from. That SNS topic ARN will be provided to you.**
 
@@ -627,7 +627,7 @@ In this section, you'll help protect suvivors from zombies. Zombie motion sensor
 
 3\. You now have your central SNS topic configured and ready to use. Ensure that you make a note of the Topic ARN you will need it in some of the following steps.
 
-4\. Now you have to open the AWS Console and go to Lambda. Create a new Lambda from the Hello World Template. 
+4\. Now you have to open the AWS Console and go to Lambda. Create a new Lambda from the Hello World Template.
 Name the Lambda "YourWorkshopName_Zombiedetector". In the Permission Section open **Choose or create an execution role**. Click on **USe an existing role** and chose in the Combobox the Role with your Workshopname and **ZombieLabLambdaRole**. Finish the process with a click on **Create function**
 ![Create Lambda Screenshot](/Images/lambda_2.png)
 
@@ -645,7 +645,7 @@ Now the funcion will be triggered every minute.
 
 9.\ Hit **Save**
 
-####Consuming the SNS Topic Messages with AWS Lambda
+#### Consuming the SNS Topic Messages with AWS Lambda
 
 Using the things learned in this workshop, can you develop a Lambda function that alerts survivors in the chat application when zombies are detected from the zombie sensor? In this section you will configure a Lambda function that triggers when messages are sent from the Edison device to the zombie sensor SNS topic. This function will push the messages to the chat application to notify survivors of zombies!
 
