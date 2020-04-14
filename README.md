@@ -622,17 +622,23 @@ In this section, you'll help protect suvivors from zombies. Zombie motion sensor
 
 3\. You now have your central SNS topic configured and ready to use. Ensure that you make a note of the Topic ARN you will need it in some of the following steps.
 
-4\. Now you have to open the AWS Console and go to Lambda. Create a new Lambda from the Hello World Template. Name the Lambda "YourWorkshopName_Zombiedetector". In the Permission Section open **Choose or create an execution role**. Click on **USe an existing role** and chose in the Combobox the Role with your Workshopname and **ZombieLabLambdaRole**. Finish the process with a click on **Create function**
+4\. Now you have to open the AWS Console and go to Lambda. Create a new Lambda from the Hello World Template. 
+Name the Lambda "YourWorkshopName_Zombiedetector". In the Permission Section open **Choose or create an execution role**. Click on **USe an existing role** and chose in the Combobox the Role with your Workshopname and **ZombieLabLambdaRole**. Finish the process with a click on **Create function**
+![Create Lambda Screenshot](/Images/lambda_2.png)
 
-5\. Click on the new created Lambda. In the Designer view Click on **Add trigger**. In **Select a trigger** mark the **CloudWatch Events/EventBridge**. In the new appeared Combobox **Rule** choose **Create new Rule**.
+5\. Click on the new created Lambda. In the Designer view Click on **Add trigger**. In **Select a trigger** mark the **CloudWatch Events/EventBridge**.
+![Create Lambda Screenshot](/Images/lambda_3.png)
+
+6\. In the new appeared Combobox **Rule** choose **Create new Rule**.
 Name the Rule "Trigger1Min" and choose **Schedule Expression* in the Rule Type. Finally copy & paste "cron(*/1 * * * ? *)" into the textbox and hit **Add**
 Now the funcion will be triggered every minute.
+![Create Lambda Screenshot](/Images/lambda_5.png)
 
-6\. Click on the Lambda you created , scroll down to **Function Code** and paste [this content](/zombieSensor/lambda/exampleCronTriggerFunction.js) into the index.js window.
+7\. Click on the Lambda you created , scroll down to **Function Code** and paste [this content](/zombieSensor/lambda/exampleCronTriggerFunction.js) into the index.js window.
 
-7\. Now copy the SNS Topic ARN you copied in the first steps to the variable **topicArn** and replace **COPY ARN HERE** with the SNS Topic ARN
+8\. Now copy the SNS Topic ARN you copied in the first steps to the variable **topicArn** and replace **COPY ARN HERE** with the SNS Topic ARN
 
-8.\ Hit **Save**
+9.\ Hit **Save**
 
 ####Consuming the SNS Topic Messages with AWS Lambda
 
