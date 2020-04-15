@@ -116,6 +116,11 @@
             },
             {
               "Effect": "Allow",
+              "Action": ["sns:*"],
+              "Resource": ["*"]
+            },
+            {
+              "Effect": "Allow",
               "Action": ["kinesis:*"],
               "Resource": ["*"]
             },
