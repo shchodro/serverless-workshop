@@ -29,9 +29,9 @@ Each of the labs in this workshop is an independent section and you may choose t
 
     This exercise integrates the popular messaging app, [Slack](http://slack.com), into the chat application so that survivors can send messages to the survivor chat from within the Slack app.
 
-* [**Lab 5: Zombie Detection with SNS**](#lab-5---zombie-detection-with-sns) (IoT device required)
+* [**Lab 5: Zombie Detection with SNS**](#lab-5---zombie-detection-with-sns)
 
-    This exercise integrates motion sensor detection of zombies to the chat system using an Intel Edison board and a Grove PIR Motion Sensor. You will configure a Lambda function to consume motion detection events and push them into the survivor chat!
+    This exercise simulates motion detection of zombies to the chat system. You will configure a Lambda function to consume motion detection events and push them into the survivor chat!
 
 ### [Workshop Cleanup](#workshop-cleanup-1)
 
