@@ -522,9 +522,7 @@ Then on line 7, replace the **endpoint** variable that has a value of **ENDPOINT
 
 **LAB 3 COMPLETE**
 
-If you would like to explore and search over the messages in the Kibana web UI that is provided with your cluster, you will need to navigate to the Elasticsearch domain you created and change the permissions. Currently you've configured the permissions so that only your AWS account has access. This allows your Lambda function to index messages into the cluster.
-
-To use the web UI to build charts and search over the index, you will need to implement an IP based policy to whitelist your computer/laptop/network or for simplicity, choose to allow everyone access. For instructions on how to modify the access policy of an ES cluster, visit [this documentation](http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-gsg-configure-access.html). If you choose to open access to anyone be aware that anyone can see your messages, so please be sure to restrict access back to your AWS account when you're done exploring Kibana, or simply delete your ES cluster.  
+You could explore and search over the messages in the Kibana web UI that is provided with your cluster. Currently you've configured the permissions wide open so that any AWS account has access. Your Lambda function is allowed to index messages into the cluster. Be aware that anyone can see your messages, so please be sure to restrict access back to your AWS account when you're done exploring Kibana, or simply delete your ES cluster.
 
 * * *
 
