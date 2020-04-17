@@ -29,7 +29,7 @@ Each of the labs in this workshop is an independent section and you may choose t
 
     This exercise integrates the popular messaging app, [Slack](http://slack.com), into the chat application so that survivors can send messages to the survivor chat from within the Slack app.
 
-* [**Lab 5: Intel Edison Zombie Motion Sensor**](#lab-5---motion-sensor-integration-with-intel-edison-and-grove) (IoT device required)
+* [**Lab 5: Zombie Detection with SNS**](#lab-5---zombie-detection-with-sns) (IoT device required)
 
     This exercise integrates motion sensor detection of zombies to the chat system using an Intel Edison board and a Grove PIR Motion Sensor. You will configure a Lambda function to consume motion detection events and push them into the survivor chat!
 
@@ -643,7 +643,7 @@ Now the funcion will be triggered every minute.
 
 #### Consuming the SNS Topic Messages with AWS Lambda
 
-Using the things learned in this workshop, can you develop a Lambda function that alerts survivors in the chat application when zombies are detected from the zombie sensor? In this section you will configure a Lambda function that triggers when messages are sent from the Edison device to the zombie sensor SNS topic. This function will push the messages to the chat application to notify survivors of zombies!
+Using the things learned in this workshop, can you develop a Lambda function that alerts survivors in the chat application when zombies are detected from the zombie sensor. In this section you will configure a Lambda function that triggers when messages are sent from the cron'd lambda to the zombie sensor SNS topic. This function will push the messages to the chat application to notify survivors of zombies!
 
 1\. Open up the Lambda console and click **Create a Lambda function**.
 
@@ -669,7 +669,7 @@ When you've copied the code into the Lambda browser editor, locate the variable 
 
 8\. That's it! When your function is created, head on over to your survivor chat application. If your session has expired you may need to login again.
 
-* Almost immediately you should begin seeing zombie sensor messages showing up in the chat application which means your messages are successfully sending from the Intel Edison device to the Zombie Sensor SNS Topic. Any survivors with Lambda functions subscribed to this topic will get notifications in their team's survivor chat service.  
+* Almost immediately you should begin seeing zombie sensor messages showing up in the chat application which means your messages are successfully sending from the cron'd lambda to the Zombie Sensor SNS Topic. Any survivors with Lambda functions subscribed to this topic will get notifications in their team's survivor chat service.  
 
 * This Lambda Function takes the zombie sensor message from SNS, parses it, and makes an AWS SigV4 signed HTTPS POST request to your API Gateway message endpoint. That endpoint inserts the record into DynamoDB as a message making it available to the application on subsequent poll requests.
 
