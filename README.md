@@ -611,9 +611,9 @@ You've configured Slack to forward messages to your zombie survivor chat app. Bu
 
 * * *
 
-## Lab 5 - Motion Sensor Integration with Intel Edison and Grove
+## Lab 5 - Zombie Detection with SNS
 
-In this section, you'll help protect suvivors from zombies. Zombie motion sensor devices allow communities to determine if zombies (or intruders) are nearby. You'll setup a Lambda function to send Zombie Events to a SNS Topic
+In this section, you'll help protect suvivors from zombies. Zombie Motion Service allows communities to determine if zombies (or intruders) are nearby. You'll setup a Lambda function to send Zombie Events to a SNS Topic
 
 #### Creating the AWS Backend
 
