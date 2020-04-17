@@ -39,7 +39,7 @@ exports.handler = function(event, context) {
                 "ComparisonOperator": "EQ"
             }
         },
-        "Limit": 20,
+        "Limit": 20000,
             "ScanIndexForward":false
     }
     console.log("Querying DynamoDB");
