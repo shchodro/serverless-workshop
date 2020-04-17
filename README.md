@@ -121,9 +121,12 @@ Click **Next Step**.
 
 On the Tags page, leave the defaults and click **Next step**. Next, on the Devices page, leave the default option of "No" selected. We will not configure the User Pool to remember user's devices.
 
-9\. On the Apps page, click **Add an app client**. In the **App Client Name** textbox, type "Zombie Survivor Chat App" and **deselect the Generate client secret checkbox**. Click **Set attribute read and write permissions**. You need to make sure that the app has "writable" and "readable" access to the attributes you created. Make sure that **all of the checkboxes are selected** for "Readable Attributes" and "Writable Attributes". Then click **Create app client**, and then click **Next step**.
+10\. On the Devices Tab , set Remember to **Always**
+![Cognito User Pools: Attributes Configuration](/Images/Cognito-Step10.jpg)
 
-10\. In the dropdowns for the **Pre authentication** and **Post confirmation** triggers, select the Lambda function named "[Your CloudFormation Stack name]-CognitoLambdaTrigger-[Your Region]". Click **Next step**.
+10\. On the Apps page, click **Add an app client**. In the **App Client Name** textbox, type "Zombie Survivor Chat App" and **deselect the Generate client secret checkbox**. Click **Set attribute read and write permissions**. You need to make sure that the app has "writable" and "readable" access to the attributes you created. Make sure that **all of the checkboxes are selected** for "Readable Attributes" and "Writable Attributes". Then click **Create app client**, and then click **Next step**.
+
+11\. In the dropdowns for the **Pre authentication** and **Post confirmation** triggers, select the Lambda function named "[Your CloudFormation Stack name]-CognitoLambdaTrigger-[Your Region]". Click **Next step**.
 
 * Cognito User Pools allows developers to inject custom workflow logic into the signup and signin process. This custom workflow logic is represented with AWS Lambda functions known as Lambda Triggers.
 
@@ -137,9 +140,9 @@ On the Tags page, leave the defaults and click **Next step**. Next, on the Devic
 
     * For this workshop we use the same backend Lambda function for both of the triggers. On invocation, the function checks what type of even has occurred, Post-Confirmation or Pre-Authentication, and executes the correct code accordingly.
 
-11\. Review the settings for your User Pool and click **Create pool**. If your pool created successfully you should be returned to the Pool Details page and it will display a green box that says "Your user pool was created successfully".
+12\. Review the settings for your User Pool and click **Create pool**. If your pool created successfully you should be returned to the Pool Details page and it will display a green box that says "Your user pool was created successfully".
 
-12\. Open a text editor on your computer and copy into it the "Pool Id" displayed on the Pool details page. Then click into the **App Client Settings** tab found on the left side navigation pane. You should see an **App client id** displayed. Copy that **App client id** into your text editor as well.
+13\. Open a text editor on your computer and copy into it the "Pool Id" displayed on the Pool details page. Then click into the **App Client Settings** tab found on the left side navigation pane. You should see an **App client id** displayed. Copy that **App client id** into your text editor as well.
 
 You are done configuring the User Pool. You will now setup federation into the Cognito Identity Pool that has already been created for you.
 
@@ -153,19 +156,19 @@ On the top navigation bar in the management console, switch to **Federated Ident
 
 ![Navigating to Federated Identities Console](/Images/Cognito-Step12.png)
 
-13\. Click into the Identity Pool that has already been created for you. It should be named "[Your CloudFormation stack name] _ identitypool". On the Idenity pool dashboard, in the upper right, select **Edit identity pool**.
+14\. Click into the Identity Pool that has already been created for you. It should be named "[Your CloudFormation stack name] _ identitypool". On the Idenity pool dashboard, in the upper right, select **Edit identity pool**.
 
-14\. Cognito Identity allows you to give access to both authenticated users and unauthenticated (guest) users. The permissions associated with these groups of users is dictated by the IAM role that you attach to these Cognito roles. Your Authenticated and Unauthenticated Cognito roles have already been configured for you in CloudFormation. The Authenticated role has been configured to give permissions to the principal (your Cognito authenticated application user) to make "execute-api:invoke" calls to the API Gateway endpoint ARNs associated with the survivor serverless app.
+15\. Cognito Identity allows you to give access to both authenticated users and unauthenticated (guest) users. The permissions associated with these groups of users is dictated by the IAM role that you attach to these Cognito roles. Your Authenticated and Unauthenticated Cognito roles have already been configured for you in CloudFormation. The Authenticated role has been configured to give permissions to the principal (your Cognito authenticated application user) to make "execute-api:invoke" calls to the API Gateway endpoint ARNs associated with the survivor serverless app.
 
 * When users authenticate into the application, they become an authenticated user, and the application allows them to send chat messages to the survivor chat.
 
-15\. Click the black dropdown arrow in the section titled "Authentication providers". You will configure your Identity pool to allow federated access from your Identity Provider, your Cognito User Pool. In the "Cognito" identity provider tab, insert your **User Pool ID** and **App Client ID** into their respective text boxes from your text editor file. Do not delete them from the text file, you'll need these items again in a later step.
+16\. Click the black dropdown arrow in the section titled "Authentication providers". You will configure your Identity pool to allow federated access from your Identity Provider, your Cognito User Pool. In the "Cognito" identity provider tab, insert your **User Pool ID** and **App Client ID** into their respective text boxes from your text editor file. Do not delete them from the text file, you'll need these items again in a later step.
 
 You should have copied these from your User Pool earlier when you set it up. If you do not have these copied, please navigate back to your Cognito User Pool you created earlier and locate your User Pool Id and App Client ID.
 
 Scroll to the bottom of the page and click **Save Changes** to save the User Pool configuration settings. Your Cognito Federated Identiy Pool has been configured with Congito User Pool as an IdP. When users authenticate to the User Pool, they will assume temporary credentials with the permissions allowed via the Authenticated Role.
 
-16\. You will now make an update to an application config file so that the serverless Javascript application can communicate with your User Pool to log users in.
+17\. You will now make an update to an application config file so that the serverless Javascript application can communicate with your User Pool to log users in.
 
 Navigate to the Amazon S3 console **in the region where you launched your CloudFormation stack.**
 
@@ -173,33 +176,33 @@ Navigate to the Amazon S3 console **in the region where you launched your CloudF
 
 ![Navigate to the S3 service](/Images/Cognito-Step16.png)
 
-17\. On the Amazon S3 buckets listing page, find and click into the bucket that was created for you by CloudFormation. It should be named with your stack name prepended to the beginning. Something like [CloudFormation Stack Name]-s3bucketforwebsitecontent"....
+18\. On the Amazon S3 buckets listing page, find and click into the bucket that was created for you by CloudFormation. It should be named with your stack name prepended to the beginning. Something like [CloudFormation Stack Name]-s3bucketforwebsitecontent"....
 
 * In the S3 Console search bar you can type **s3bucketforwebsitecontent** and your S3 bucket will display.
 
-18\. This bucket contains all the contents for hosting your serverless JS app as well as the source code for the workshop's Lambda functions and CloudFormation resources. Please do not delete these contents. Click into the folder (prefix) named **S3** and navigate through to the file **S3/assets/js/constants.js**
+19\. This bucket contains all the contents for hosting your serverless JS app as well as the source code for the workshop's Lambda functions and CloudFormation resources. Please do not delete these contents. Click into the folder (prefix) named **S3** and navigate through to the file **S3/assets/js/constants.js**
 
 Download the **S3/assets/js.constants.js** file to your local machine and open it with a text editor.
 
 ![Download the constants.js file](/Images/Cognito-Step18.png)
 
-19\. Open up the constants.js file and copy over the User Pool ID into the "USER_POOL_ID" variable. Then copy the App Client ID into the "CLIENT_ID" variable. These should be copied from the open text file you had open from earlier.
+20\. Open up the constants.js file and copy over the User Pool ID into the "USER_POOL_ID" variable. Then copy the App Client ID into the "CLIENT_ID" variable. These should be copied from the open text file you had open from earlier.
 
 * Your serverless javascript zombie application requires this constants values in file communicate with the different services of the workshop.
 
 * The Identity Pool Id was automatically filled in with several other variables when the CloudFormation template was launched.
 
-20\. Save the constants.js file and upload it back to S3. While in the S3 console window, make sure you are in the **js** directory. Click the blue **Upload** button and upload the constants.js file from your local machine. Within the upload dialog, select the "Manage public permissions" dropdown and set the permissions on the file to read-only for the public by selecting the **Read** checkbox next to Everyone under the Objects category. You can also drag your file from your local machine into the S3 browser console to initiate an upload and then when the object is uploaded, make sure to select **Make Public**.
+21\. Save the constants.js file and upload it back to S3. While in the S3 console window, make sure you are in the **js** directory. Click the blue **Upload** button and upload the constants.js file from your local machine. Within the upload dialog, select the "Manage public permissions" dropdown and set the permissions on the file to read-only for the public by selecting the **Read** checkbox next to Everyone under the Objects category. You can also drag your file from your local machine into the S3 browser console to initiate an upload and then when the object is uploaded, make sure to select **Make Public**.
 
 * Your application now has the configuration it needs to interact with Cognito.
 
-21\. Navigate back to CloudFormation and find the Chat Room URL (MyChatRoomURL) in the Outputs tab of your CloudFormation stack. Click it to open the chat application in a new browser window.
+22\. Navigate back to CloudFormation and find the Chat Room URL (MyChatRoomURL) in the Outputs tab of your CloudFormation stack. Click it to open the chat application in a new browser window.
 
 * If you already had the application opened in your browser, please refresh the page so that the new constants.js loads with the app.
 
-22\. You should see a sign in page for the Zombie survivor web app. You need to create an account so click **Sign Up**.
+23\. You should see a sign in page for the Zombie survivor web app. You need to create an account so click **Sign Up**.
 
-23\. Fill out the form to sign up as a survivor.
+24\. Fill out the form to sign up as a survivor.
 
 * **Select your Camp**: Specify the geography where you live! Currently this attribute is not used in the application and is available for those that want to tackle an extra credit opportunity!. When you're done with the workshop, try and tackle the Channel Challenge in the Appendix.
 
@@ -209,7 +212,7 @@ Download the **S3/assets/js.constants.js** file to your local machine and open i
 
 When done, click **Sign Up**.
 
-24\. A form should appear asking you to type in your confirmation code. Please check your inbox for the email address you signed up with. You should received an email with the subject "Signal Corps Survivor Confirmation" (May be in your Spam folder!). Copy over the verification code and enter into the confirmation window.
+25\. A form should appear asking you to type in your confirmation code. Please check your inbox for the email address you signed up with. You should received an email with the subject "Signal Corps Survivor Confirmation" (May be in your Spam folder!). Copy over the verification code and enter into the confirmation window.
 
 **Troubleshooting tips:**
 
@@ -226,7 +229,7 @@ When done, click **Sign Up**.
 
 After confirming your account, sign in with your credentials and begin chatting! You should see a red button called **Start Chatting** - click that button to toggle your session on. You may then begin typing messages followed by the "Enter" key to submit them.
 
-25\. Your messages should begin showing up in the central chat pane window. Feel free to share the URL with your teammates, have them signup for accounts and begin chatting as a group! If you are building this solution solo, you can create multiple user accounts with different email addresses. Then login to both user accounts in different browsers to simulate multiple users.
+26\. Your messages should begin showing up in the central chat pane window. Feel free to share the URL with your teammates, have them signup for accounts and begin chatting as a group! If you are building this solution solo, you can create multiple user accounts with different email addresses. Then login to both user accounts in different browsers to simulate multiple users.
 
 **The baseline chat application is now configured and working! There is still important functionality missing and the Lambda Signal Corps needs you to build it out...so get started below!**
 
@@ -618,28 +621,25 @@ In this section, you'll help protect suvivors from zombies. Zombie Motion Servic
 1\. Create the SNS Topic. Navigate to the SNS product page within the AWS Management Console and click **Topics** in the left hand menu. Then click on 'Create New Topic'. You will be presented with the following window. Fill in the fields with your desired values and click create topic.
 ![Create Topic Screenshot](/Images/MotionSensor-createTopic.png)
 
-2\. You will now need to edit the topic policy to permit any AWS account to subscribe lambda functions to your SNS topic. Select the check box next to your new topic, and then click **Actions -> Edit topic policy**. You need to configure these settings presented as shown the below screenshot. Then click **Update Policy**. This part is what allows others (perhaps teammates working on this lab with you, to consume notifications from your SNS topic.
-![Edit Topic Policy Screenshot](/Images/MotionSensor-createTopicPolicy.png)
+2\. You now have your central SNS topic configured and ready to use. Ensure that you make a note of the Topic ARN you will need it in some of the following steps.
 
-3\. You now have your central SNS topic configured and ready to use. Ensure that you make a note of the Topic ARN you will need it in some of the following steps.
-
-4\. Now you have to open the AWS Console and go to Lambda. Create a new Lambda from the Hello World Template.
+3\. Now you have to open the AWS Console and go to Lambda. Create a new Lambda from the Hello World Template.
 Name the Lambda "YourWorkshopName_Zombiedetector". In the Permission Section open **Choose or create an execution role**. Click on **USe an existing role** and chose in the Combobox the Role with your Workshopname and **ZombieLabLambdaRole**. Finish the process with a click on **Create function**
 ![Create Lambda Screenshot](/Images/lambda_2.png)
 
-5\. Click on the new created Lambda. In the Designer view Click on **Add trigger**. In **Select a trigger** mark the **CloudWatch Events/EventBridge**.
+4\. Click on the new created Lambda. In the Designer view Click on **Add trigger**. In **Select a trigger** mark the **CloudWatch Events/EventBridge**.
 ![Create Lambda Screenshot](/Images/lambda_3.png)
 
-6\. In the new appeared Combobox **Rule** choose **Create new Rule**.
+5\. In the new appeared Combobox **Rule** choose **Create new Rule**.
 Name the Rule "Trigger1Min" and choose **Schedule Expression* in the Rule Type. Finally copy & paste "cron(*/1 * * * ? *)" into the textbox and hit **Add**
 Now the funcion will be triggered every minute.
 ![Create Lambda Screenshot](/Images/Lambda_5.png)
 
-7\. Click on the Lambda you created , scroll down to **Function Code** and paste [this content](/zombieSensor/lambda/exampleCronTriggerFunction.js) into the index.js window.
+6\. Click on the Lambda you created , scroll down to **Function Code** and paste [this content](/zombieSensor/lambda/exampleCronTriggerFunction.js) into the index.js window.
 
-8\. Now copy the SNS Topic ARN you copied in the first steps to the variable **topicArn** and replace **COPY ARN HERE** with the SNS Topic ARN
+7\. Now copy the SNS Topic ARN you copied in the first steps to the variable **topicArn** and replace **COPY ARN HERE** with the SNS Topic ARN
 
-9.\ Hit **Save**
+8.\ Hit **Save**
 
 #### Consuming the SNS Topic Messages with AWS Lambda
 
