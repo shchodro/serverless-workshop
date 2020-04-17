@@ -121,8 +121,8 @@ Click **Next Step**.
 
 On the Tags page, leave the defaults and click **Next step**. Next, on the Devices page, leave the default option of "No" selected. We will not configure the User Pool to remember user's devices.
 
-10\. On the Devices Tab , set Remember to **Always**
-![Cognito User Pools: Attributes Configuration](/Images/Cognito-Step10.jpg)
+9\. On the Devices Tab , set Remember to **Always**
+![Cognito User Pools: Attributes Configuration](/Images/Cognito_Step10.jpg)
 
 10\. On the Apps page, click **Add an app client**. In the **App Client Name** textbox, type "Zombie Survivor Chat App" and **deselect the Generate client secret checkbox**. Click **Set attribute read and write permissions**. You need to make sure that the app has "writable" and "readable" access to the attributes you created. Make sure that **all of the checkboxes are selected** for "Readable Attributes" and "Writable Attributes". Then click **Create app client**, and then click **Next step**.
 
