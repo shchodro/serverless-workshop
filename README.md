@@ -121,7 +121,7 @@ Click **Next Step**.
 
 On the Tags page, leave the defaults and click **Next step**. Next, on the Devices page, leave the default option of "No" selected. We will not configure the User Pool to remember user's devices.
 
-9\. On the Apps page, click **Add an app**. In the **App Name** textbox, type "Zombie Survivor Chat App" and **deselect the client secret checkbox**. Click **Set attribute read and write permissions**. You need to make sure that the app has "writable" and "readable" access to the attributes you created. Make sure that **all of the checkboxes are selected** for "Readable Attributes" and "Writable Attributes". Then click **Create app client**, and then click **Next step**.
+9\. On the Apps page, click **Add an app client**. In the **App Client Name** textbox, type "Zombie Survivor Chat App" and **deselect the Generate client secret checkbox**. Click **Set attribute read and write permissions**. You need to make sure that the app has "writable" and "readable" access to the attributes you created. Make sure that **all of the checkboxes are selected** for "Readable Attributes" and "Writable Attributes". Then click **Create app client**, and then click **Next step**.
 
 10\. In the dropdowns for the **Pre authentication** and **Post confirmation** triggers, select the Lambda function named "[Your CloudFormation Stack name]-CognitoLambdaTrigger-[Your Region]". Click **Next step**.
 
@@ -346,7 +346,7 @@ In this section, you’ll create a free-trial Twilio SMS phone number. You will 
 
 * **International Users** - These are US phone numbers that you are provisioning in Twilio. You can also choose to configure an internationl number in Twilio, however there may be charges that apply. Currently this workshop only supports US phone numbers in the front end JS application due to the necessary formatting logic that has yet to be introduced into the code!
 
-If you have an international mobile device, you can still do this lab. When registering for a user account in the zombie chat, just use a dummy placeholder 10 digit phone number for now. Later steps in this lab will illustrate a workaround that allows you to send SMS using your international phne number*
+If you have an international mobile device, you can still do this lab. When registering for a user account in the zombie chat, just use a dummy placeholder 10 digit phone number for now. Later steps in this lab will illustrate a workaround that allows you to send SMS using your international phone number*
 
 4\. Once you’ve received a phone number, click the **Manage Numbers** button on the left navigation pane. Click on your phone number, which will take you to the properties page for that number.
 
@@ -483,21 +483,21 @@ In this lab you'll launch an Elasticsearch Service cluster and setup DynamoDB St
 
 11\. On the Blueprints screen select **Blank Function** to create a Lambda function from scratch.
 
-12\. In Configure Triggers section, select the DynamoDB event source type and then select the **messages** DynamoDB table. It should appear as **"[Your CloudFormation stack name]-messages"**. Then set the **Batch size** to **5**, the **Starting position** to **Latest** and select the checkbox **Enable trigger**. Then click on Next button.
+12\. Give your function a name, such as **"[Your CloudFormation stack name]-ESsearch"**. Set the "Runtime" as **Node.js 12.x**. You can set a description for the function if you'd like.
 
-13\. Give your function a name, such as **"[Your CloudFormation stack name]-ESsearch"**. Keep the runtime at the default. You can set a description for the function if you'd like.
+13\. Paste in the code from the ZombieWorkshopSearchIndexing.js file provided to you. This is found in the Github repo in the "ElasticsearchLambda" folder.
 
-14\. Paste in the code from the ZombieWorkshopSearchIndexing.js file provided to you. This is found in the Github repo in the "ElasticsearchLambda" folder.
-
-15\. On [line 6](/ElasticSearchLambda/ZombieWorkshopSearchIndexing.js#L6) in the code provided, replace the **region** variable with the code for the region you are working in (the region you launched your stack, created your Lambda function etc). If you're working in Oregon region, then leave the code us-west-2 as is.
+14\. On [line 6](/ElasticSearchLambda/ZombieWorkshopSearchIndexing.js#L6) in the code provided, replace the **region** variable with the code for the region you are working in (the region you launched your stack, created your Lambda function etc). If you're working in Ireland region, then leave the code eu-west-1 as is.
 
 Then on line 7, replace the **endpoint** variable that has a value of **ENDPOINT_HERE** with the Elasticsearch endpoint created in step 8\. **Make sure the endpoint you paste starts with https://**.
 
 * This step requires that your cluster is finished creating and in "Active" state before you'll have access to see the endpoint of your cluster.
 
-16\. Now you'll add an execution role to your Lambda function which gives permissions for your Lambda function to access AWS resources. For the Role, select **Choose an existing role**, and for the Existing Role, select **"[Your CloudFormation stack name]-ZombieLabLambdaRole"** which is the role that was created for you for this workshop. It has permissions to the Elasticsearch service.
+15\. Now you'll add an execution role to your Lambda function which gives permissions for your Lambda function to access AWS resources. For the Role, select **Choose an existing role**, and for the Existing Role, select **"[Your CloudFormation stack name]-ZombieLabLambdaRole"** which is the role that was created for you for this workshop. It has permissions to the Elasticsearch service.
 
-17\. Expand the "Advanced settings" section and find the "Timeout" field for your Lambda function. In the timeout field, change the function timeout to **1** minute. This ensures Lambda can process the batch of messages before Lambda times out. Keep all the other defaults on the page set as is. Select **Next** and then on the Review page, select **Create function** to create your Lambda function.
+16\. Expand the "Advanced settings" section and find the "Timeout" field for your Lambda function. In the timeout field, change the function timeout to **1** minute. This ensures Lambda can process the batch of messages before Lambda times out. Keep all the other defaults on the page set as is. Select **Next** and then on the Review page, select **Create function** to create your Lambda function.
+
+17\. In Configure Triggers section, select the DynamoDB event source type and then select the **messages** DynamoDB table. It should appear as **"[Your CloudFormation stack name]-messages"**. Then set the **Batch size** to **5**, the **Starting position** to **Latest** and select the checkbox **Enable trigger**. Then click on Next button.
 
 18\. In the above step, we configured [DynamoDB Streams](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html) to capture incoming messages on the table and trigger a Lambda function to push them to our Elasticsearch cluster. Your messages posted in the chat from this point forward will be indexed to Elasticsearch. Post a few messages in the chat, at least 5 as configured in the DynamoDB Streams event source (batch size). You should be able to see that messages are being indexed in the "Indices" section for your cluster in the Elasticsearch Service console.
 ![API Gateway Invoke URL](/Images/Search-Done.png)
