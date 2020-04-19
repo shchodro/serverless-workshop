@@ -495,7 +495,7 @@ Then on line 7, replace the **endpoint** variable that has a value of **ENDPOINT
 
 17.\ Go back to the Amazon Elasticsearch Service console and click on the domain you created. Follow the **Kibana** link.
 
-18.\ You will get to the management page and you will be asked to create an index pattern. Replace **"logstash-\*"** with **'messages*'** and click **Create**.
+18.\ You will get to the management page and you will be asked to create an index pattern. Replace **logstash-\*** with **message\*** and click **Create**.
 ![Kibana Index Pattern Creation](/Images/Search-Kibana-1.png)
 
 Check that the Index pattern was correctly saved
