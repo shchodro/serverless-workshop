@@ -506,7 +506,7 @@ Check that the Index pattern was correctly saved
 
 **LAB 3 COMPLETE**
 
-You could explore and search over the messages in the Kibana web UI that is provided with your cluster. Currently you've configured the permissions wide open so that any AWS account has access. Your Lambda function is allowed to index messages into the cluster. Be aware that anyone can see your messages, so please be sure to restrict access back to your AWS account when you're done exploring Kibana, or simply delete your ES cluster.
+You could explore and search over the messages in the Kibana web UI that is provided with your cluster. As a small step when embarking the kibana WebUI reset the Index-pattern to "message*". Currently you've configured the permissions wide open so that any AWS account has access. Your Lambda function is allowed to index messages into the cluster. Be aware that anyone can see your messages, so please be sure to restrict access back to your AWS account when you're done exploring Kibana, or simply delete your ES cluster.
 
 * * *
 
