@@ -463,24 +463,7 @@ In this lab you'll launch an Elasticsearch Service cluster and setup DynamoDB St
 
 2\. Create a new Amazon Elasticsearch domain. Choose "Development" as deployment-type & Elasticsearch-Version 5.6. Click **Next**. Provide it a name such as "[Your CloudFormation stack name]-zombiemessages" and leave all other settings at default values. Click **Next**.
 
-3\. On the **Configure access and security** page, choose "Public access" for the Network configuration and select a JSON-defined Access-Policy. The JSON-part for Resource shall contain your account-id, region & your chosen elasticsearch domain-name.
-
-```js
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": { "AWS": "*" },
-      "Action": [
-        "es:*"
-      ],
-      "Resource": "arn:aws:es:YOUR_REGION:YOUR_ACCOUNT_ID:domain/YOUR_DOMAIN_NAME/*"
-    }
-  ]
-}
-```
-Leave the other default cluster settings and click **Next**.
+3\. On the **Configure access and security** page, choose "public access" for the Network configuration  and select Custom Access-Policy. Use an IPv4 based access policy using a wildcard-Symbol. Leave the other default cluster settings and click **Next**.
 
 4\. On the the domain review page select **Next**
 
@@ -509,9 +492,9 @@ Then on line 7, replace the **endpoint** variable that has a value of **ENDPOINT
 
 * This step requires that your cluster is finished creating and in "Active" state before you'll have access to see the endpoint of your cluster.
 
-14\. Now you'll add an execution role to your Lambda function which gives permissions for your Lambda function to access AWS resources. For the Role, select **Choose an existing role**, and for the Existing Role, select **"[Your CloudFormation stack name]-ZombieLabLambdaRole"** which is the role that was created for you for this workshop. It has permissions to the Elasticsearch service.
+14\. Now you'll add an execution role to your Lambda function which gives permissions for your Lambda function to access AWS resources. Scroll down and select "Basic settings". For the Role, select **Choose an existing role**, and for the Existing Role, select **"[Your CloudFormation stack name]-ZombieLabLambdaRole"** which is the role that was created for you for this workshop. It has permissions to the Elasticsearch service.
 
-15\. Expand the "Advanced settings" section and find the "Timeout" field for your Lambda function. In the timeout field, change the function timeout to **1** minute. This ensures Lambda can process the batch of messages before Lambda times out. Keep all the other defaults on the page set as is. Select **Next** and then on the Review page, select **Create function** to create your Lambda function.
+15\. Within  "Basic settings" section and find the "Timeout" field for your Lambda function. In the timeout field, change the function timeout to **1** minute. This ensures Lambda can process the batch of messages before Lambda times out. Keep all the other defaults on the page set as is.
 
 16\. In Configure Triggers section, select the DynamoDB event source type and then select the **messages** DynamoDB table. It should appear as **"[Your CloudFormation stack name]-messages"**. Then set the **Batch size** to **5**, the **Starting position** to **Latest** and select the checkbox **Enable trigger**. Then click on Next button.
 
