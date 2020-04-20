@@ -628,7 +628,7 @@ Now the funcion will be triggered every minute.
 
 7\. Now copy the SNS Topic ARN you copied in the first steps to the variable **topicArn** and replace **COPY ARN HERE** with the SNS Topic ARN
 
-8.\ Hit **Save**
+8\. Hit **Save**
 
 #### Consuming the SNS Topic Messages with AWS Lambda
 
