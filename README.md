@@ -491,22 +491,22 @@ Then on line 7, replace the **endpoint** variable that has a value of **ENDPOINT
 15\. In the above step, we configured [DynamoDB Streams](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html) to capture incoming messages on the table and trigger a Lambda function to push them to our Elasticsearch cluster. Your messages posted in the chat from this point forward will be indexed to Elasticsearch. Post a few messages in the chat, at least 5 as configured in the DynamoDB Streams event source (batch size). You should be able to see that messages are being indexed in the "Indices" section for your cluster in the Elasticsearch Service console.
 ![API Gateway Invoke URL](/Images/Search-Done.png)
 
-16.\ Make sure you posted some messages, so they were pushed to ElasticSearch.
+16\. Make sure you posted some messages, so they were pushed to ElasticSearch.
 
-17.\ Go back to the Amazon Elasticsearch Service console and click on the domain you created. Follow the **Kibana** link.
+17\. Go back to the Amazon Elasticsearch Service console and click on the domain you created. Follow the **Kibana** link.
 
-18.\ You will get to the management page and you will be asked to create an index pattern. Replace **logstash-\*** with **message\*** and click **Create**.
+18\. You will get to the management page and you will be asked to create an index pattern. Replace **logstash-\*** with **message\*** and click **Create**.
 ![Kibana Index Pattern Creation](/Images/Search-Kibana-1.png)
 
 Check that the Index pattern was correctly saved
 ![Kibana Index Pattern Creation](/Images/Search-Kibana-2.png)
 
-19.\ Now you can implement search across messages being sent to the chat
+19\. Now you can implement search across messages being sent to the chat
 ![Kibana Search](/Images/Search-Kibana-3.png)
 
 **LAB 3 COMPLETE**
 
-You could explore and search over the messages in the Kibana web UI that is provided with your cluster. As a small step when embarking the kibana WebUI reset the Index-pattern to "message*". Currently you've configured the permissions wide open so that any AWS account has access. Your Lambda function is allowed to index messages into the cluster. Be aware that anyone can see your messages, so please be sure to restrict access back to your AWS account when you're done exploring Kibana, or simply delete your ES cluster.
+Currently you've configured the permissions wide open so please be sure to restrict access back to your AWS account when you're done exploring Kibana, or simply delete your ES cluster.
 
 * * *
 
