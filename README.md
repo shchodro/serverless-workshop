@@ -117,7 +117,7 @@ Click **Next Step**.
 
 8\. On the "Message Customizations" page, in the section titled **Do you want to customize your email verification message?** add a custom email subject such as "Signal Corps Survivor Confirmation". We won't modify the message body but you could add your own custom message in there. We'll let Cognito send the emails from the service email address, but in production you could configure Cognito to send these verifications from an email server you own. Leave the rest of the default settings and click **Next step**.
 
-On the Tags page, leave the defaults and click **Next step**. Next, on the Devices page, leave the default option of "No" selected. We will not configure the User Pool to remember user's devices.
+On the Tags page, leave the defaults and click **Next step**. Next, on the Devices page, leave the default option of "No" selected.
 
 9\. On the Devices Tab , set Remember to **Always**
 ![Cognito User Pools: Attributes Configuration](/Images/Cognito_Step10.jpg)
