@@ -87,7 +87,7 @@ var processEvent = function(event, context) {
                 // If no records returned then fail the message with not authorized message.
                 if (data.Count < 1) {
                     console.log('Unauthorized user. Invalid Slack username and team domain. No matching users found.');
-                    context.done('The incoming Slack username and team do not match any existing registered survivors. Please sign up to the suvivor chat first, and make sure to register your Slack User name and team domain (name) at sign up.');
+                    context.done('The incoming Slack username and team do not match any existing registered survivors. Please sign up to the survivor chat first, and make sure to register your Slack User name and team domain (name) at sign up.');
                 } else {
                     // Parse result and get Slack username.
                     data.Items.forEach(function(item) {
