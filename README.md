@@ -89,7 +89,7 @@ You will now setup the Cognito User Pool as the user directory of your chat app 
 
 Cognito User Pools is not available in all AWS regions. Please review the list [here](https://docs.aws.amazon.com/general/latest/gr/rande.html#cognito_identity_region) for the regions that Cognito is available in. Therefore if you launched your CloudFormation stack in any region other than one of those listed on the above website, then please use the top navigation bar in the management console to switch AWS regions and navigate to **eu-west-1 (Ireland)** to configure Cognito. Your application will stay hosted in the region you launched the CloudFormation template, but the authentication with Cognito will reside in eu-west-1 (Ireland). If you launched the Cloudformation stack in one of those regions where Cognito exists, then please simply navigate to the Cognito service in the AWS Management Console as the service is available in that region already and you will configure it within that region.
 
-When inside the Cognito service console, click the blue button **Manage your User Pools**. You will setup the user directory that your chat application users will authenticate to when they use your app.
+When inside the Cognito service console, click the blue button **Manage User Pools**. You will setup the user directory that your chat application users will authenticate to when they use your app.
 
 2\. Click the blue button **Create a User Pool** in the upper right corner. You'll create a new user directory.
 
@@ -113,16 +113,16 @@ Click **Next Step**.
 
 7\. On the verifications page, leave the defaults and click **Next step**.
 
-* We will not require MFA for this application. However, for during sign up we are requiring verification via email address. This is denoted with the email checkbox selected for "Do you want to require verification of emails or phone numbers?". With this setting, when users sign up for the application, a confirmation code will be sent to their email which they'll be required to input into the application for confirmation.
+* We will not require MFA for this application. However, during sign up we are requiring verification via email address. This is denoted with the email checkbox selected for "Do you want to require verification of emails or phone numbers?". With this setting, when users sign up for the application, a confirmation code will be sent to their email which they'll be required to input into the application for confirmation.
 
 8\. On the "Message Customizations" page, in the section titled **Do you want to customize your email verification message?** add a custom email subject such as "Signal Corps Survivor Confirmation". We won't modify the message body but you could add your own custom message in there. We'll let Cognito send the emails from the service email address, but in production you could configure Cognito to send these verifications from an email server you own. Leave the rest of the default settings and click **Next step**.
 
-On the Tags page, leave the defaults and click **Next step**. Next, on the Devices page, leave the default option of "No" selected. We will not configure the User Pool to remember user's devices.
+On the Tags page, leave the defaults and click **Next step**.
 
 9\. On the Devices Tab , set Remember to **Always**
 ![Cognito User Pools: Attributes Configuration](/Images/Cognito_Step10.jpg)
 
-10\. On the Apps page, click **Add an app client**. In the **App Client Name** textbox, type "Zombie Survivor Chat App" and **deselect the Generate client secret checkbox**. Click **Set attribute read and write permissions**. You need to make sure that the app has "writable" and "readable" access to the attributes you created. Make sure that **all of the checkboxes are selected** for "Readable Attributes" and "Writable Attributes". Then click **Create app client**, and then click **Next step**.
+10\. On the Apps page, click **Add an app client**. In the **App Client Name** textbox, type "Zombie Survivor Chat App" and **deselect the "Generate client secret" checkbox**. Click **Set attribute read and write permissions**. You need to make sure that the app has "writable" and "readable" access to the attributes you created. Make sure that **all of the checkboxes are selected** for "Readable Attributes" and "Writable Attributes". Then click **Create app client**, and then click **Next step**.
 
 11\. In the dropdowns for the **Pre authentication** and **Post confirmation** triggers, select the Lambda function named **[Your CloudFormation Stack name]-CognitoLambdaTrigger-[Your Region]**. Click **Next step**.
 
@@ -140,7 +140,7 @@ On the Tags page, leave the defaults and click **Next step**. Next, on the Devic
 
 12\. Review the settings for your User Pool and click **Create pool**. If your pool created successfully you should be returned to the Pool Details page and it will display a green box that says "Your user pool was created successfully".
 
-13\. Open a text editor on your computer and copy into it the **Pool Id** displayed on the Pool details page. Then click into the **App Client Settings** tab found on the left side navigation pane. You should see an **App client id** displayed. Copy that **App client id** into your text editor as well.
+13\. Open a text editor on your computer and copy into it the **Pool Id** displayed on the Pool details page. Then click into the **App Clients** item found on the left side navigation pane. You should see an **App client id** displayed. Copy that **App client id** into your text editor as well.
 
 You are done configuring the User Pool. You will now setup federation into the Cognito Identity Pool that has already been created for you.
 
@@ -164,7 +164,7 @@ On the top navigation bar in the management console, switch to **Federated Ident
 
 You should have copied these from your User Pool earlier when you set it up. If you do not have these copied, please navigate back to your Cognito User Pool you created earlier and locate your User Pool Id and App Client ID.
 
-Scroll to the bottom of the page and click **Save Changes** to save the User Pool configuration settings. Your Cognito Federated Identiy Pool has been configured with Congito User Pool as an IdP. When users authenticate to the User Pool, they will assume temporary credentials with the permissions allowed via the Authenticated Role.
+Scroll to the bottom of the page and click **Save Changes** to save the User Pool configuration settings. Your Cognito Federated Identity Pool has been configured with Cognito User Pool as an IdP. When users authenticate to the User Pool, they will assume temporary credentials with the permissions allowed via the Authenticated Role.
 
 17\. You will now make an update to an application config file so that the serverless Javascript application can communicate with your User Pool to log users in.
 
@@ -180,7 +180,7 @@ Navigate to the Amazon S3 console **in the region where you launched your CloudF
 
 19\. This bucket contains all the contents for hosting your serverless JS app as well as the source code for the workshop's Lambda functions and CloudFormation resources. Please do not delete these contents. Click into the folder (prefix) named **S3** and navigate through to the file **S3/assets/js/constants.js**
 
-Download the **S3/assets/js.constants.js** file to your local machine and open it with a text editor.
+Download the **S3/assets/js/constants.js** file to your local machine and open it with a text editor.
 
 ![Download the constants.js file](/Images/Cognito-Step18.png)
 
