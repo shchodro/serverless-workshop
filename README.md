@@ -459,7 +459,7 @@ In this lab you'll launch an Elasticsearch Service cluster and setup DynamoDB St
 
 2\. Create a new Amazon Elasticsearch domain. Choose "Development" as deployment-type & Elasticsearch-Version 5.6. Click **Next**. Provide it a name such as "[Your CloudFormation stack name]-zombiemessages" and leave all other settings at default values. Click **Next**.
 
-3\. On the **Configure access and security** page, choose "public access" for the Network configuration. Under the **Access policy** from the **Domain access policy** dropdown choose **Custom Access-Policy**. Use an IPv4 based access policy. Use **'*'** as a "Principal" and select **Allow** from the dropdown. Leave the other default cluster settings and click **Next**.
+3\. On the **Configure access and security** page, choose "public access" for the Network configuration. Under the **Access policy** from the **Domain access policy** dropdown choose **Custom Access-Policy**. Use an IPv4 based access policy. Use **'0.0.0.0/0'** as a "Principal" and select **Allow** from the dropdown. Leave the other default cluster settings and click **Next**.
 
 4\. On the Review page, select **Confirm** to create your Elasticsearch cluster.
 
@@ -484,9 +484,9 @@ Then on line 7, replace the **endpoint** variable that has a value of **ENDPOINT
 
 * This step requires that your cluster is finished creating and in "Active" state before you'll have access to see the endpoint of your cluster.
 
-13\. Scroll down and select **Basic settings**. section and find the **Timeout** field for your Lambda function. In the timeout field, change the function timeout to **1** minute. This ensures Lambda can process the batch of messages before Lambda times out. Keep all the other defaults on the page set as is.
+13\. Scroll down and select the **Basic settings** section, and find the **Timeout** field for your Lambda function. In the timeout field, change the function timeout to **1** minute. This ensures Lambda can process the batch of messages before Lambda times out. Keep all the other defaults on the page set as is.
 
-14\. In Configure Triggers section, select the DynamoDB event source type and then select the **messages** DynamoDB table. It should appear as **"[Your CloudFormation stack name]-messages"**. Then set the **Batch size** to **5**, the **Starting position** to **Latest** and select the checkbox **Enable trigger**. Then click on Next button.
+14\. In Configure Triggers section, select the DynamoDB event source type and then select the **messages** DynamoDB table. It should appear as **"[Your CloudFormation stack name]-messages"**. Then set the **Batch size** to **5**, the **Starting position** to **Latest** and select the checkbox **Enable trigger**. Then click on Add button.
 
 15\. In the above step, we configured [DynamoDB Streams](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html) to capture incoming messages on the table and trigger a Lambda function to push them to our Elasticsearch cluster. Your messages posted in the chat from this point forward will be indexed to Elasticsearch. Post a few messages in the chat, at least 5 as configured in the DynamoDB Streams event source (batch size). You should be able to see that messages are being indexed in the "Indices" section for your cluster in the Elasticsearch Service console.
 ![API Gateway Invoke URL](/Images/Search-Done.png)
@@ -501,12 +501,12 @@ Then on line 7, replace the **endpoint** variable that has a value of **ENDPOINT
 Check that the Index pattern was correctly saved
 ![Kibana Index Pattern Creation](/Images/Search-Kibana-2.png)
 
-19\. Now you can implement search across messages being sent to the chat
+19\. Now you can click on Discover and search across messages being sent to the chat
 ![Kibana Search](/Images/Search-Kibana-3.png)
 
 **LAB 3 COMPLETE**
 
-Currently you've configured the permissions wide open so please be sure to restrict access back to your AWS account when you're done exploring Kibana, or simply delete your ES cluster.
+**Currently you've configured the permissions wide open so please be sure to restrict access back to your AWS account when you're done exploring Kibana, or simply delete your ES cluster.**
 
 * * *
 
@@ -603,17 +603,17 @@ You've configured Slack to forward messages to your zombie survivor chat app. Bu
 
 ## Lab 5 - Zombie Detection with SNS
 
-In this section, you'll help protect suvivors from zombies. Zombie Motion Service allows communities to determine if zombies (or intruders) are nearby. You'll setup a Lambda function to send Zombie Events to a SNS Topic
+In this section, you'll help protect suvivors from zombies. Zombie Motion Service allows communities to determine if zombies (or intruders) are nearby. You'll setup a Lambda function to send Zombie Events to a SNS Topic.
 
 #### Creating the AWS Backend
 
-1\. Create the SNS Topic. Navigate to the SNS product page within the AWS Management Console and click **Topics** in the left hand menu. Then click on 'Create New Topic'. You will be presented with the following window. Fill in the fields with your desired values and click create topic.
+1\. Create the SNS Topic. Navigate to the SNS product page within the AWS Management Console and click **Topics** in the left hand menu (which might be initially hidden). Then click on 'Create Topic'. You will be presented with the following window. Fill in the fields with your desired values and click create topic.
 ![Create Topic Screenshot](/Images/MotionSensor-createTopic.png)
 
 2\. You now have your central SNS topic configured and ready to use. Ensure that you make a note of the Topic ARN you will need it in some of the following steps.
 
 3\. Now you have to open the AWS Console and go to Lambda. Create a new Lambda from the Hello World Template.
-Name the Lambda "YourWorkshopName_Zombiedetector". In the Permission Section open **Choose or create an execution role**. Click on **USe an existing role** and chose in the Combobox the Role with your Workshopname and **ZombieLabLambdaRole**. Finish the process with a click on **Create function**
+Name the Lambda "**[Your CloudFormation Stack name]-ZombieDetector**". In the Permission Section open **Choose or create an execution role**. Click on **Use an existing role** and chose in the combo box the Role with your CloudFormation stack name and **ZombieLabLambdaRole**. Finish the process with a click on **Create function**
 ![Create Lambda Screenshot](/Images/lambda_2.png)
 
 4\. Click on the new created Lambda. In the Designer view Click on **Add trigger**. In **Select a trigger** mark the **CloudWatch Events/EventBridge**.
@@ -664,11 +664,11 @@ When you've copied the code into the Lambda browser editor, locate the variable 
 
 2\. Be sure to delete the TwilioProcessing Lambda Function. Also if you no longer plan to use Twilio, please delete your Twilio free trial account and/or phone numbers that you provisioned.
 
-3\. Be sure to delete the Elasticsearch cluster and the associated Lambda function that you created for the Elasticsearch lab. Also delete the IAM role you created for the Elasicsearch Lambda function, "ZombieLabLambdaDynamoESRole".
+3\. Be sure to delete the ElasticSearch cluster and the associated Lambda function that you created for the ElasticSearch lab. Also delete the IAM role you created for the ElasticSearch Lambda function, "ZombieLabLambdaDynamoESRole".
 
 4\. Be sure to delete the Lambda function created as a part of the Slack lab and the Slack API resource you created. Also delete Slack if you no longer want an account with them.
 
-5\. Be sure to delete the SNS topic (if you created one) and the Lambda function that you created in the Zombie Sensor lab.
+5\. Be sure to delete the SNS topic (if you created one) and the Lambda functions that you created in the Zombie Sensor lab (ZombieDetector and sensor).
 
 6\. Delete the Cognito User Pool and Identity Pool associated with your application, that you created during lab setup.
 
@@ -676,7 +676,7 @@ When you've copied the code into the Lambda browser editor, locate the variable 
 
 * Identity Pool: Click into the Federated Identities page of Cognito and find your identity pool ([stackname]-identitypool). Then click **Edit identity pool**. Scroll to the bottom and delete the identity pool.
 
-7\. Navigate to CloudWatch Logs and make sure to delete unnecessary Log Groups if they exist.   
+7\. Navigate to CloudWatch Logs and make sure to delete unnecessary Log Groups if they exist.
 
 8\. Once those resources have been deleted, go to the CloudFormation console and find the Stack that you launched in the beginning of the workshop, select it, and click **Delete Stack**.
 
