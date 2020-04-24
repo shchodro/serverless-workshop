@@ -459,7 +459,7 @@ In this lab you'll launch an Elasticsearch Service cluster and setup DynamoDB St
 
 2\. Create a new Amazon Elasticsearch domain. Choose "Development" as deployment-type & Elasticsearch-Version 5.6. Click **Next**. Provide it a name such as "[Your CloudFormation stack name]-zombiemessages" and leave all other settings at default values. Click **Next**.
 
-3\. On the **Configure access and security** page, choose "public access" for the Network configuration. Under the **Access policy** from the **Domain access policy** dropdown choose **Custom Access-Policy**. Use an IPv4 based access policy. Use **'*'** as a "Principal" and select **Allow** from the dropdown. Leave the other default cluster settings and click **Next**.
+3\. On the **Configure access and security** page, choose "public access" for the Network configuration. Under the **Access policy** from the **Domain access policy** dropdown choose **Custom Access-Policy**. Use an IPv4 based access policy. Use **'0.0.0.0/0'** as a "Principal" and select **Allow** from the dropdown. Leave the other default cluster settings and click **Next**.
 
 4\. On the Review page, select **Confirm** to create your Elasticsearch cluster.
 
@@ -484,9 +484,9 @@ Then on line 7, replace the **endpoint** variable that has a value of **ENDPOINT
 
 * This step requires that your cluster is finished creating and in "Active" state before you'll have access to see the endpoint of your cluster.
 
-13\. Scroll down and select **Basic settings**. section and find the **Timeout** field for your Lambda function. In the timeout field, change the function timeout to **1** minute. This ensures Lambda can process the batch of messages before Lambda times out. Keep all the other defaults on the page set as is.
+13\. Scroll down and select the **Basic settings** section, and find the **Timeout** field for your Lambda function. In the timeout field, change the function timeout to **1** minute. This ensures Lambda can process the batch of messages before Lambda times out. Keep all the other defaults on the page set as is.
 
-14\. In Configure Triggers section, select the DynamoDB event source type and then select the **messages** DynamoDB table. It should appear as **"[Your CloudFormation stack name]-messages"**. Then set the **Batch size** to **5**, the **Starting position** to **Latest** and select the checkbox **Enable trigger**. Then click on Next button.
+14\. In Configure Triggers section, select the DynamoDB event source type and then select the **messages** DynamoDB table. It should appear as **"[Your CloudFormation stack name]-messages"**. Then set the **Batch size** to **5**, the **Starting position** to **Latest** and select the checkbox **Enable trigger**. Then click on Add button.
 
 15\. In the above step, we configured [DynamoDB Streams](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html) to capture incoming messages on the table and trigger a Lambda function to push them to our Elasticsearch cluster. Your messages posted in the chat from this point forward will be indexed to Elasticsearch. Post a few messages in the chat, at least 5 as configured in the DynamoDB Streams event source (batch size). You should be able to see that messages are being indexed in the "Indices" section for your cluster in the Elasticsearch Service console.
 ![API Gateway Invoke URL](/Images/Search-Done.png)
@@ -501,12 +501,12 @@ Then on line 7, replace the **endpoint** variable that has a value of **ENDPOINT
 Check that the Index pattern was correctly saved
 ![Kibana Index Pattern Creation](/Images/Search-Kibana-2.png)
 
-19\. Now you can implement search across messages being sent to the chat
+19\. Now you can click on Discover and search across messages being sent to the chat
 ![Kibana Search](/Images/Search-Kibana-3.png)
 
 **LAB 3 COMPLETE**
 
-Currently you've configured the permissions wide open so please be sure to restrict access back to your AWS account when you're done exploring Kibana, or simply delete your ES cluster.
+**Currently you've configured the permissions wide open so please be sure to restrict access back to your AWS account when you're done exploring Kibana, or simply delete your ES cluster.**
 
 * * *
 
