@@ -1,4 +1,6 @@
 
 .DS_Store
 *.pptx
+package-lock.json
+node_modules
 
