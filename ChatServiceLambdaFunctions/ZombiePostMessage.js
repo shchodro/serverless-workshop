@@ -20,7 +20,7 @@ exports.handler = function(event, context) {
     if(event.message == null || event.message == 'null' || event.name == null || event.name == 'null') {
         return context.fail("Message and Name cannot be null");
     } else {
-        message = sanitizer.value(event.message);
+        message = sanitizer.value(event.message,'string');
         from = event.name;
     }
 
