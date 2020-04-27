@@ -1,5 +1,6 @@
 // Processes incoming messages for Zombie chat service
 var aws = require('aws-sdk');
+var sanitizer = require('sanitize')();
 var ddb;
 var querystring = require('querystring');
 
@@ -19,7 +20,7 @@ exports.handler = function(event, context) {
     if(event.message == null || event.message == 'null' || event.name == null || event.name == 'null') {
         return context.fail("Message and Name cannot be null");
     } else {
-        message = event.message;
+        message = sanitizer.value(event.message,'string');
         from = event.name;
     }
 
