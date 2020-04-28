@@ -327,6 +327,7 @@ Head back to the survivor chat app and **Refresh the page** type messages. POST 
 
 ![talker resource](/Images/Typing-Done.png)
 
+If you see errors, try signing out and signing back in.
 * * *
 
 ## Lab 2 - SMS Integration with Twilio
@@ -441,6 +442,8 @@ If the integration was successful, you should receive a confirmation response te
 
 * **Troubleshooting tip**: If you are unable to send text messages, please ensure you are sending from the same phone number that you registered when you signed up for a survivor account in the Zombie Chat. If you review the TwilioProcessing Lambda function you will see that the code is checking the DynamoDB users table to confirm if the incoming message forward to us from Twilio was sent from an authorized phone number. Twilio provides that to us when it sends the message to our API.
 
+* **Troubleshooting tip 2**: You can use the CloudWatch log group /aws/lambda/<<name of your lambda>> to check for error messages - and if the lambda was invoked at all.
+
 * **For international users**: If you have an international phone number and want to send text messages -
   1. Modify your user record in the DynamoDB Users table with your correct International Phone Number. You need to do this in DynamoDB directly, because the JS chat application performs validation that requires a 10 digit US phone number on the client. After modifying this in DynamoDB, you should be able to send text messages to your Twilio phone number from your international phone number because the the Lambda phone number validation in the code will recognize your phone number.
 
@@ -486,7 +489,7 @@ Then on line 7, replace the **endpoint** variable that has a value of **ENDPOINT
 
 13\. Scroll down and select the **Basic settings** section, and find the **Timeout** field for your Lambda function. In the timeout field, change the function timeout to **1** minute. This ensures Lambda can process the batch of messages before Lambda times out. Keep all the other defaults on the page set as is.
 
-14\. In Configure Triggers section, select the DynamoDB event source type and then select the **messages** DynamoDB table. It should appear as **"[Your CloudFormation stack name]-messages"**. Then set the **Batch size** to **5**, the **Starting position** to **Latest** and select the checkbox **Enable trigger**. Then click on Add button.
+14\. In the Designer section, select the DynamoDB event source type and then select the **messages** DynamoDB table. It should appear as **"[Your CloudFormation stack name]-messages"**. Then set the **Batch size** to **5**, the **Starting position** to **Latest** and select the checkbox **Enable trigger**. Then click on Add button.
 
 15\. In the above step, we configured [DynamoDB Streams](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html) to capture incoming messages on the table and trigger a Lambda function to push them to our Elasticsearch cluster. Your messages posted in the chat from this point forward will be indexed to Elasticsearch. Post a few messages in the chat, at least 5 as configured in the DynamoDB Streams event source (batch size). You should be able to see that messages are being indexed in the "Indices" section for your cluster in the Elasticsearch Service console.
 ![API Gateway Invoke URL](/Images/Search-Done.png)
